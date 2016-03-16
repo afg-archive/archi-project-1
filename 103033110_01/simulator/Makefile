@@ -89,7 +89,13 @@ memory.o : $(USER_DIR)/memory.cc $(USER_DIR)/memory.h
 test_memory.o : $(USER_DIR)/test_memory.cc $(USER_DIR)/memory.h $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/test_memory.cc
 
-test.out : word.o test_word.o memory.o test_memory.o code.o test_code.o gtest_main.a
+simulator.o : $(USER_DIR)/simulator.cc $(USER_DIR)/simulator.h $(USER_DIR)/word.h $(USER_DIR)/code.h $(USER_DIR)/memory.h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/simulator.cc
+
+test_simulator.o : $(USER_DIR)/test_simulator.cc $(USER_DIR)/simulator.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/test_simulator.cc
+
+test.out : word.o test_word.o memory.o test_memory.o code.o test_code.o simulator.o test_simulator.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
 
 .PHONY: run
