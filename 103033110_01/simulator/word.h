@@ -5,7 +5,7 @@
 
 struct Word {
     union {
-        uint32_t u;  // signed value
+        uint32_t u = 0u;  // signed value
         int32_t s;   // unsigned value
     };
 

@@ -53,3 +53,11 @@ TEST(Word, ImmediateSigned) {
     w.u = 0;
     EXPECT_EQ(0, w.c_imms());
 }
+
+
+TEST(Word, DefaultsToZero) {
+    Word words[0xffff];
+    for (auto w: words) {
+        ASSERT_EQ(0u, w.u);
+    }
+}
