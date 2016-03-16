@@ -29,7 +29,7 @@ CXXFLAGS += -march=native -O3 -std=c++11 -g -Wall -Wextra -pthread
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = test_word.out
+TESTS = test.out
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -77,9 +77,15 @@ word.o : $(USER_DIR)/word.cc $(USER_DIR)/word.h
 test_word.o : $(USER_DIR)/test_word.cc $(USER_DIR)/word.h $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/test_word.cc
 
-test_word.out : word.o test_word.o gtest_main.a
+memory.o : $(USER_DIR)/memory.cc $(USER_DIR)/memory.h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/memory.cc
+
+test_memory.o : $(USER_DIR)/test_memory.cc $(USER_DIR)/memory.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/test_memory.cc
+
+test.out : word.o test_word.o memory.o test_memory.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
 
 .PHONY: run
 test: tests
-	./test_word.out
+	./test.out
