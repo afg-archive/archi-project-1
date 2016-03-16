@@ -25,36 +25,6 @@ TEST(Word, GetBits) {
 }
 
 
-TEST(Word, BitsAlias) {
-    Word w;
-    //          10987654321098765432109876543210
-    //          ******-----*****-----*****------
-    w.u =     0b10100011001110101110101101110111;
-    EXPECT_EQ(0b101000,                           w.opcode());
-    EXPECT_EQ(      0b11001,                      w.rs());
-    EXPECT_EQ(           0b11010,                 w.rt());
-    EXPECT_EQ(                0b11101,            w.rd());
-    EXPECT_EQ(                     0b01101,       w.c_shamt());
-    EXPECT_EQ(                          0b110111, w.funct());
-    EXPECT_EQ(                0b1110101101110111, w.c_immu());
-    EXPECT_EQ(      0b11001110101110101101110111, w.c_addr());
-}
-
-
-TEST(Word, ImmediateSigned) {
-    Word w;
-
-    w.u = 0b1111111111111111;
-    EXPECT_EQ(-1, w.c_imms());
-
-    w.u = 0b1000000000000000;
-    EXPECT_EQ(-0x8000, w.c_imms());
-
-    w.u = 0;
-    EXPECT_EQ(0, w.c_imms());
-}
-
-
 TEST(Word, DefaultsToZero) {
     Word words[0xffff];
     for (auto w: words) {

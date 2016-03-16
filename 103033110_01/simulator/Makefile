@@ -25,7 +25,7 @@ USER_DIR = .
 CPPFLAGS += -isystem $(GTEST_DIR)/include
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -march=native -O3 -std=c++11 -g -Wall -Wextra -pthread
+CXXFLAGS += -march=native -flto -O3 -std=c++11 -g -Wall -Wextra -pthread
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
@@ -77,13 +77,19 @@ word.o : $(USER_DIR)/word.cc $(USER_DIR)/word.h
 test_word.o : $(USER_DIR)/test_word.cc $(USER_DIR)/word.h $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/test_word.cc
 
+code.o : $(USER_DIR)/code.cc $(USER_DIR)/code.h $(USER_DIR)/word.h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/code.cc
+
+test_code.o : $(USER_DIR)/test_code.cc $(USER_DIR)/code.h $(USER_DIR)/word.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/test_code.cc
+
 memory.o : $(USER_DIR)/memory.cc $(USER_DIR)/memory.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/memory.cc
 
 test_memory.o : $(USER_DIR)/test_memory.cc $(USER_DIR)/memory.h $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/test_memory.cc
 
-test.out : word.o test_word.o memory.o test_memory.o gtest_main.a
+test.out : word.o test_word.o memory.o test_memory.o code.o test_code.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
 
 .PHONY: run
