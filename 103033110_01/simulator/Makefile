@@ -71,8 +71,15 @@ gtest_main.a : gtest-all.o gtest_main.o
 # gtest_main.a, depending on whether it defines its own main()
 # function.
 
+word.o : $(USER_DIR)/word.cc $(USER_DIR)/word.h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/word.cc
+
 test_word.o : $(USER_DIR)/test_word.cc $(USER_DIR)/word.h $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/test_word.cc
 
-test_word.out : test_word.o gtest_main.a
+test_word.out : word.o test_word.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+.PHONY: run
+test: tests
+	./test_word.out
