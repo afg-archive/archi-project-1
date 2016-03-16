@@ -1,3 +1,6 @@
+#pragma once
+
+
 enum r_instruction {
     add  = 0x20,
     addu = 0x21,
