@@ -36,12 +36,15 @@ TESTS = test.out
 GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
                 $(GTEST_DIR)/include/gtest/internal/*.h
 
-# House-keeping build targets.
+
+sources = $(wildcard $(USER_DIR)/*.cc)
+include $(sources:.cc=.d)
+
 
 tests : $(TESTS)
 
 clean :
-	rm -f $(TESTS) gtest.a gtest_main.a *.o
+	rm -f $(TESTS) gtest.a gtest_main.a $(sources:.cc=.o)
 
 # Builds gtest.a and gtest_main.a.
 
@@ -71,33 +74,16 @@ gtest_main.a : gtest-all.o gtest_main.o
 # gtest_main.a, depending on whether it defines its own main()
 # function.
 
-word.o : $(USER_DIR)/word.cc $(USER_DIR)/word.h
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/word.cc
+%.d: %.cc
+		@set -e; rm -f $@; \
+		$(CXX) -MM $(CPPFLAGS) $(CXXFLAGS) $< > $@.$$$$; \
+		sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+		rm -f $@.$$$$
 
-test_word.o : $(USER_DIR)/test_word.cc $(USER_DIR)/word.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/test_word.cc
-
-code.o : $(USER_DIR)/code.cc $(USER_DIR)/code.h $(USER_DIR)/word.h
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/code.cc
-
-test_code.o : $(USER_DIR)/test_code.cc $(USER_DIR)/code.h $(USER_DIR)/word.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/test_code.cc
-
-memory.o : $(USER_DIR)/memory.cc $(USER_DIR)/memory.h
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/memory.cc
-
-test_memory.o : $(USER_DIR)/test_memory.cc $(USER_DIR)/memory.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/test_memory.cc
-
-simulator.o : $(USER_DIR)/simulator.cc $(USER_DIR)/simulator.h $(USER_DIR)/word.h $(USER_DIR)/code.h $(USER_DIR)/memory.h
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/simulator.cc
-
-test_simulator.o : $(USER_DIR)/test_simulator.cc $(USER_DIR)/simulator.h $(USER_DIR)/memory.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/test_simulator.cc
-
-test.out : word.o test_word.o memory.o test_memory.o code.o test_code.o simulator.o test_simulator.o gtest_main.a
+test.out : gtest_main.a $(sources:.cc=.o)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
 
-.PHONY: run
+
+.PHONY: test
 test: tests
 	./test.out
