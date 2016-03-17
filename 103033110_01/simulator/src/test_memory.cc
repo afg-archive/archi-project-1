@@ -21,5 +21,6 @@ TEST(Memory, MemoryMisalign) {
 TEST(Memory, AddressOverflow) {
     Memory m(1024);
 
-    ASSERT_THROW(m[4096], address_overflow);
+    EXPECT_THROW(m[4096], address_overflow);
+    EXPECT_THROW(m.get(1024), address_overflow);
 }
