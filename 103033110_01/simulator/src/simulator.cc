@@ -1,6 +1,6 @@
 #include "simulator.h"
 
 
-Simulator::Simulator(): dmem(Memory(1024)), imem(Memory(1024)), rmem(Memory(32)) {
+Simulator::Simulator(): dmem(DMemory(1024)), imem(IMemory(1024)), rmem(RMemory(32)) {
 
 }

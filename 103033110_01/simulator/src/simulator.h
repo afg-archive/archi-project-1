@@ -3,9 +3,9 @@
 
 class Simulator {
 public:
-    Memory dmem;  // data memory
-    Memory imem;  // instruction memory
-    Memory rmem;  // register memory
+    DMemory dmem;  // data memory
+    IMemory imem;  // instruction memory
+    RMemory rmem;  // register memory
     Simulator();
     void run();
 };
