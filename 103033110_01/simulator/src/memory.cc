@@ -11,16 +11,11 @@ Memory::~Memory() {
 }
 
 
-Word& Memory::get(size_t index) {
-    if (index < size) {
-        return wp[index];
+Word& Memory::operator[] (size_t addr) {
+    if (addr % 4) throw memory_misalign();
+    if (addr / 4 < size) {
+        return wp[addr / 4];
     } else {
         throw address_overflow();
     }
-}
-
-
-Word& Memory::operator[] (size_t addr) {
-    if (addr % 4) throw memory_misalign();
-    return get(addr / 4);
 }

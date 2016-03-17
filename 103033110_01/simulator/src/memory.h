@@ -20,6 +20,5 @@ private:
 public:
     Memory(size_t); // constructs memory with size in bytes
     ~Memory();
-    Word& get(size_t);  // get word by index
     Word& operator[] (size_t); // get word by location in bytes
 };
