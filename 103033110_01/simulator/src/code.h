@@ -4,15 +4,15 @@
 
 class Code: public Word {
 public:
-    uint32_t opcode();
-    uint32_t rs();
-    uint32_t rt();
-    uint32_t rd();
-    uint32_t c_shamt();
-    uint32_t funct();
+    uint32_t opcode() const;
+    uint32_t rs() const;
+    uint32_t rt() const;
+    uint32_t rd() const;
+    uint32_t c_shamt() const;
+    uint32_t funct() const;
 
-    uint32_t c_immu(); // immediate, unsigned
-    int32_t c_imms();  // immediate, signed
+    uint32_t c_immu() const; // immediate, unsigned
+    int32_t c_imms() const;  // immediate, signed
 
-    uint32_t c_addr();
+    uint32_t c_addr() const;
 };

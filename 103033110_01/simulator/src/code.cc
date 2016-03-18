@@ -1,7 +1,7 @@
 #include "code.h"
 
 
-#define alias(name, msb, lsb)   uint32_t Code::name() { return bits(msb, lsb); }
+#define alias(name, msb, lsb)   uint32_t Code::name() const { return bits(msb, lsb); }
 
 alias(opcode, 31, 26);
 alias(rs, 25, 21);
@@ -15,7 +15,7 @@ alias(c_addr, 25, 0);
 #undef alias
 
 
-int32_t Code::c_imms() {
+int32_t Code::c_imms() const {
     union {
         int16_t s16;
         uint16_t u16;

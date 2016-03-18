@@ -9,6 +9,6 @@ struct Word {
         int32_t s;   // unsigned value
     };
 
-    uint32_t bits(uint32_t, uint32_t);
+    uint32_t bits(uint32_t, uint32_t) const;
     // word[a:b]
 };
