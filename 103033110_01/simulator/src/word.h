@@ -11,8 +11,8 @@ struct Word {
 
     Word(uint32_t initial = 0u): u(initial) {}
 
-    // word[m:l]
-    uint32_t bits(uint32_t, uint32_t) const {
-        return (this->u >> l) & ((2 << (m - l)) - 1);
+    // word[msb:lsb] note: b = bit
+    uint32_t bits(uint32_t msb, uint32_t lsb) const {
+        return (this->u >> lsb) & ((2 << (msb - lsb)) - 1);
     }
 };

@@ -1,6 +1,7 @@
-#define _BSD_SOURCE
+#pragma once
 #include <endian.h>
 #include <cstdint>
+#include <cstddef>
 
 
 template <class ResultType, class InputType>
@@ -18,26 +19,27 @@ class Memory {
     public:
         Proxy(Memory& mem, size_t offset): mem(mem), offset(offset) {}
         template <class T>
-        bool check() {
-            bool clean = true;
-            if (offset + sizeof(T) > Bytes) {
-                clean = false;
-            }
-            if (offset % sizeof(T)) {
-                clean = false;
-            }
-            return clean;
+        bool check() const {
+            return true;
+            // bool clean = true;
+            // if (offset + sizeof(T) > Bytes) {
+            //     clean = false;
+            // }
+            // if (offset % sizeof(T)) {
+            //     clean = false;
+            // }
+            // return clean;
         }
         template <class T>
         void set(T value) {
             if (check<T>()) {
-                *(reinterpret_cast<T*>(mem.data + offset)) = value;
+                *(T*)(mem.data + offset) = value;
             }
         }
         template <class T>
-        T get() {
+        T get() const {
             if (check<T>()) {
-                return *(reinterpret_cast<T*>(mem.data + offset));
+                return *((T*)(mem.data + offset));
             } else {
                 return 0;
             }
@@ -46,37 +48,37 @@ class Memory {
         void setu8(uint8_t value) {
             set<uint8_t>(value);
         }
-        uint8_t getu8() {
+        uint8_t getu8() const {
             return get<uint8_t>();
         }
         void sets8(int8_t value) {
             set<int8_t>(value);
         }
-        int8_t gets8() {
+        int8_t gets8() const {
             return get<int8_t>();
         }
         void setu16(uint16_t value) {
             set<uint16_t>(htobe16(value));
         }
-        uint16_t getu16() {
+        uint16_t getu16() const {
             return be16toh(get<uint16_t>());
         }
         void sets16(int16_t value) {
             setu16(type_convert<uint16_t>(value));
         }
-        int16_t gets16() {
+        int16_t gets16() const {
             return type_convert<int16_t>(getu16());
         }
         void setu32(uint32_t value) {
             set<uint32_t>(htobe32(value));
         }
-        uint32_t getu32() {
+        uint32_t getu32() const {
             return be32toh(get<uint32_t>());
         }
         void sets32(int32_t value) {
             setu32(type_convert<uint32_t>(value));
         }
-        int32_t gets32() {
+        int32_t gets32() const {
             return type_convert<int32_t>(getu32());
         }
     };

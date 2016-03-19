@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "memory2.h"
+#include "memory.h"
 
 
 TEST(Memory2, ByteOrder) {
@@ -18,6 +18,17 @@ TEST(Memory2, ByteOrder) {
     ASSERT_EQ(0x5678, m[2].getu16());
 
     ASSERT_EQ(0x12345678, m[0].getu32());
+}
+
+
+TEST(Memory2, GCPPWTF) {
+    Memory<4> m;
+
+    m[0].setu16(0x1234);
+    ASSERT_EQ(0x12340000, m[0].getu32());
+
+    m[0].setu16(0x5678);
+    ASSERT_EQ(0x56780000, m[0].getu32());
 }
 
 
