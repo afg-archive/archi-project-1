@@ -6,7 +6,7 @@
 
 template <class ResultType, class InputType>
 ResultType type_convert(InputType value) {
-    return *(ResultType*)&value;
+    return (union { InputType input; ResultType res; }) {value} .res;
 }
 
 
@@ -33,13 +33,21 @@ class Memory {
         template <class T>
         void set(T value) {
             if (check<T>()) {
-                *(T*)(mem.data + offset) = value;
+                for (size_t i = 0ul; i < sizeof(T); ++ i) {
+                    mem.data[offset + i] = value;
+                    value >>= 8;
+                }
             }
         }
         template <class T>
         T get() const {
             if (check<T>()) {
-                return *((T*)(mem.data + offset));
+                T result(0);
+                for (size_t i = 0ul; i < sizeof(T); ++ i) {
+                    result |= mem.data[offset + i] << (i * 8);
+                }
+                return result;
+                // return *(T*)((void*)(mem.data + offset));
             } else {
                 return 0;
             }

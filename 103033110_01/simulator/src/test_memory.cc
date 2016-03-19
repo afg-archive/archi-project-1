@@ -21,7 +21,7 @@ TEST(Memory2, ByteOrder) {
 }
 
 
-TEST(Memory2, GCPPWTF) {
+TEST(Memory2, GCCWTF) {
     Memory<4> m;
 
     m[0].setu16(0x1234);
