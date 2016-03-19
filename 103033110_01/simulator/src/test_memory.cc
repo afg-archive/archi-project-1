@@ -84,3 +84,17 @@ TEST(Memory2, SignedUnsigned2) {
     ASSERT_EQ(-1, m[0].gets16());
     ASSERT_EQ(-1, m[2].gets16());
 }
+
+
+
+TEST(Memory2, MisalignGuard) {
+    Memory<1024> m;
+
+    m[0].sets32(-1);
+
+    ASSERT_EQ(-1, m[0].gets32());
+
+    m[1].sets32(0);
+
+    ASSERT_EQ(-1, m[0].gets32());
+}

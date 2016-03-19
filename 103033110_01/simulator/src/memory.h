@@ -20,15 +20,14 @@ class Memory {
         Proxy(Memory& mem, size_t offset): mem(mem), offset(offset) {}
         template <class T>
         bool check() const {
-            return true;
-            // bool clean = true;
-            // if (offset + sizeof(T) > Bytes) {
-            //     clean = false;
-            // }
-            // if (offset % sizeof(T)) {
-            //     clean = false;
-            // }
-            // return clean;
+            bool clean = true;
+            if (offset + sizeof(T) > Bytes) {
+                clean = false;
+            }
+            if (offset % sizeof(T)) {
+                clean = false;
+            }
+            return clean;
         }
         template <class T>
         void set(T value) {
