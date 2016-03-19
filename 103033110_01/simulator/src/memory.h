@@ -10,7 +10,6 @@ ResultType type_convert(InputType value) {
 }
 
 
-template <size_t Bytes>
 class Memory {
     class Proxy {
     private:
@@ -21,7 +20,7 @@ class Memory {
         template <class T>
         bool check() const {
             bool clean = true;
-            if (offset + sizeof(T) > Bytes) {
+            if (offset + sizeof(T) > mem.Bytes) {
                 clean = false;
             }
             if (offset % sizeof(T)) {
@@ -90,9 +89,13 @@ class Memory {
         }
     };
 protected:
-    uint8_t data[Bytes];
+    const size_t Bytes;
+    uint8_t* data;
 public:
-    Memory(): data() {}
+    Memory(size_t Bytes): Bytes(Bytes), data(new uint8_t[Bytes]()) {}
+    ~Memory() {
+        delete[] data;
+    }
     Proxy operator[] (size_t offset) {
         return Proxy(*this, offset);
     }
