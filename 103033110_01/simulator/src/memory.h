@@ -6,7 +6,9 @@
 
 template <class ResultType, class InputType>
 ResultType type_convert(InputType value) {
-    return (union { InputType input; ResultType res; }) {value} .res;
+    static_assert(sizeof(ResultType) == sizeof(InputType), "ResultType must have the same size of InputType");
+    union { InputType input; ResultType res; } conv {value};
+    return conv.res;
 }
 
 
@@ -31,21 +33,13 @@ class Memory {
         template <class T>
         void set(T value) {
             if (check<T>()) {
-                for (size_t i = 0ul; i < sizeof(T); ++ i) {
-                    mem.data[offset + i] = value;
-                    value >>= 8;
-                }
+                ((T*)mem.data)[offset / sizeof(T)] = value;
             }
         }
         template <class T>
         T get() const {
             if (check<T>()) {
-                T result(0);
-                for (size_t i = 0ul; i < sizeof(T); ++ i) {
-                    result |= mem.data[offset + i] << (i * 8);
-                }
-                return result;
-                // return *(T*)((void*)(mem.data + offset));
+                return ((T*)mem.data)[offset / sizeof(T)];
             } else {
                 return 0;
             }
@@ -88,13 +82,13 @@ class Memory {
             return type_convert<int32_t>(getu32());
         }
     };
-protected:
+public:
     const size_t Bytes;
-    uint8_t* data;
+    void* data;
 public:
     Memory(size_t Bytes): Bytes(Bytes), data(new uint8_t[Bytes]()) {}
     ~Memory() {
-        delete[] data;
+        delete[] (uint8_t*)data;
     }
     Proxy operator[] (size_t offset) {
         return Proxy(*this, offset);

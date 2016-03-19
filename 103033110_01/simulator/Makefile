@@ -44,7 +44,7 @@ include $(sources:.cc=.d)
 tests : $(TESTS)
 
 clean :
-	rm -f $(TESTS) gtest.a gtest_main.a $(sources:.cc=.o)
+	rm -f $(TESTS) gtest.a gtest_main.a gtest-all.o gtest_main.o $(sources:.cc=.o)
 
 # Builds gtest.a and gtest_main.a.
 
