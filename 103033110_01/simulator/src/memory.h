@@ -1,74 +1,90 @@
-#pragma once
-#include <cstddef>
-#include <exception>
-#include "word.h"
-#include "code.h"
+#define _BSD_SOURCE
+#include <endian.h>
+#include <cstdint>
 
 
-using std::size_t;
+template <class ResultType, class InputType>
+ResultType type_convert(InputType value) {
+    return *(ResultType*)&value;
+}
 
 
-class memory_misalign: public std::exception {};
-
-class address_overflow: public std::exception {};
-
-
-template <
-    class WordClass,
-    size_t WordSize,
-    class OverflowException = address_overflow,
-    class MisalignException = memory_misalign
->
+template <size_t Bytes>
 class Memory {
+    class Proxy {
+    private:
+        Memory& mem;
+        size_t offset;
+    public:
+        Proxy(Memory& mem, size_t offset): mem(mem), offset(offset) {}
+        template <class T>
+        bool check() {
+            bool clean = true;
+            if (offset + sizeof(T) > Bytes) {
+                clean = false;
+            }
+            if (offset % sizeof(T)) {
+                clean = false;
+            }
+            return clean;
+        }
+        template <class T>
+        void set(T value) {
+            if (check<T>()) {
+                *(reinterpret_cast<T*>(mem.data + offset)) = value;
+            }
+        }
+        template <class T>
+        T get() {
+            if (check<T>()) {
+                return *(reinterpret_cast<T*>(mem.data + offset));
+            } else {
+                return 0;
+            }
+        }
+    public:
+        void setu8(uint8_t value) {
+            set<uint8_t>(value);
+        }
+        uint8_t getu8() {
+            return get<uint8_t>();
+        }
+        void sets8(int8_t value) {
+            set<int8_t>(value);
+        }
+        int8_t gets8() {
+            return get<int8_t>();
+        }
+        void setu16(uint16_t value) {
+            set<uint16_t>(htobe16(value));
+        }
+        uint16_t getu16() {
+            return be16toh(get<uint16_t>());
+        }
+        void sets16(int16_t value) {
+            setu16(type_convert<uint16_t>(value));
+        }
+        int16_t gets16() {
+            return type_convert<int16_t>(getu16());
+        }
+        void setu32(uint32_t value) {
+            set<uint32_t>(htobe32(value));
+        }
+        uint32_t getu32() {
+            return be32toh(get<uint32_t>());
+        }
+        void sets32(int32_t value) {
+            setu32(type_convert<uint32_t>(value));
+        }
+        int32_t gets32() {
+            return type_convert<int32_t>(getu32());
+        }
+    };
 protected:
-    const size_t size;
-    WordClass* wp;
+    uint8_t data[Bytes];
 public:
-    // constructs memory with size in bytes
-    Memory(size_t size): size(size) {
-        wp = new WordClass[size];
-    }
-
-    ~Memory() {
-        delete [] wp;
-    }
-
-    // get word by index
-    virtual WordClass& get(size_t index) {
-        if (index < size) {
-            return wp[index];
-        } else {
-            throw OverflowException();
-        }
-    }
-
-    // get word by location in bytes
-    WordClass& operator[] (size_t addr) {
-        if (addr % WordSize) throw MisalignException();
-        return get(addr / WordSize);
-    }
-};
-
-
-class DAddressOverflow: public address_overflow {};
-class IAddressOverflow: public address_overflow {};
-class RAddressOverflow: public address_overflow {};
-class DMemoryMisalign: public memory_misalign {};
-class IMemoryMisalign: public memory_misalign {};
-
-
-using DMemory = Memory<Word, 4, DAddressOverflow, DMemoryMisalign>;
-using IMemory = Memory<Code, 4, IAddressOverflow, IMemoryMisalign>;
-
-
-using _RMemoryBase = Memory<Word, 1, RAddressOverflow>;
-
-class RMemory: public _RMemoryBase {
-    using _RMemoryBase::_RMemoryBase;  // inherit constructor
-    Word& get(size_t index) override {
-        if (not index) {
-            wp[0].u = 0u;
-        }
-        return _RMemoryBase::get(index);
+    Memory(): data() {}
+    Proxy operator[] (size_t offset) {
+        return Proxy(*this, offset);
     }
 };

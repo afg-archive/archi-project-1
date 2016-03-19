@@ -1,52 +1,75 @@
 #include <gtest/gtest.h>
-
-#include "memory.h"
-#include "word.h"
+#include "memory2.h"
 
 
-TEST(Memory, ZeroInit) {
-    Memory<Word, 4> m(1024);
+TEST(Memory2, ByteOrder) {
+    Memory<4> m;
+    m[0].setu8(0x12);
+    m[1].setu8(0x34);
+    m[2].setu8(0x56);
+    m[3].setu8(0x78);
 
-    EXPECT_EQ(0u, m[0].u);
-    EXPECT_EQ(0u, m[4092].u);
+    ASSERT_EQ(0x12, m[0].getu8());
+    ASSERT_EQ(0x34, m[1].getu8());
+    ASSERT_EQ(0x56, m[2].getu8());
+    ASSERT_EQ(0x78, m[3].getu8());
+
+    ASSERT_EQ(0x1234, m[0].getu16());
+    ASSERT_EQ(0x5678, m[2].getu16());
+
+    ASSERT_EQ(0x12345678, m[0].getu32());
 }
 
 
-TEST(Memory, MemoryMisalign) {
-    Memory<Word, 4> m(1024);
+TEST(Memory2, SetUnsigned) {
+    Memory<4> m;
 
-    ASSERT_THROW(m[3], memory_misalign);
+    m[0].setu32(0x98765432);
+
+    ASSERT_EQ(0x98765432, m[0].getu32());
+
+    m[0].setu16(0x3322);
+    m[2].setu16(0xabcd);
+
+    ASSERT_EQ(0x3322abcd, m[0].getu32());
+
+    m[0].setu8(0xa1);
+    m[1].setu8(0xb2);
+    m[2].setu8(0xc3);
+    m[3].setu8(0xd4);
+
+    ASSERT_EQ(0xa1b2c3d4, m[0].getu32());
 }
 
 
-TEST(Memory, AddressOverflow) {
-    Memory<Word, 4> m(1024);
+TEST(Memory2, SetSigned) {
+    Memory<4> m;
 
-    EXPECT_THROW(m[4096], address_overflow);
-    EXPECT_THROW(m.get(1024), address_overflow);
+    m[0].sets32(-1);
 }
 
 
-TEST(Memory, Writable) {
-    Memory<Word, 4> m(1024);
+TEST(Memory2, SignedUnsigned) {
+    Memory<4> m;
 
-    m[4].u = 3;
-    ASSERT_EQ(3, m[4].u);
-    ASSERT_EQ(3, m[4].s);
-    ASSERT_EQ(3, m.get(1).u);
-    ASSERT_EQ(3, m.get(1).s);
+    m[0].sets8(-1);
+
+    ASSERT_EQ(0xff, m[0].getu8());
+    ASSERT_EQ(0xff00, m[0].getu16());
+    ASSERT_EQ(0xff000000, m[0].getu32());
 }
 
 
-TEST(RMemory, ZeroReadOnly) {
-    RMemory r(1024);
+TEST(Memory2, SignedUnsigned2) {
+    Memory<4> m;
 
-    r[0].u = 1u;
-    ASSERT_EQ(0u, r[0].u);
+    m[0].sets32(-1);
 
-    r[0].s = -53423;
-    ASSERT_EQ(0u, r[0].u);
+    ASSERT_EQ(-1, m[0].gets8());
+    ASSERT_EQ(-1, m[1].gets8());
+    ASSERT_EQ(-1, m[2].gets8());
+    ASSERT_EQ(-1, m[3].gets8());
 
-    r[0].u = 0xff;
-    ASSERT_EQ(0u, r[0].u);
+    ASSERT_EQ(-1, m[0].gets16());
+    ASSERT_EQ(-1, m[2].gets16());
 }
