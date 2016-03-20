@@ -143,3 +143,16 @@ TEST(Memory2, MisalignAndOverflow) {
     es.fatals[DMisalign] = false;
     ASSERT_FALSE(es.fatals.any());
 }
+
+
+TEST(Memory2, Clear) {
+    DMemory m(1024);
+
+    m[256].setu32(0x4f933a83);
+
+    ASSERT_EQ(0x4f933a83, m[256].getu32());
+
+    m.clear();
+
+    ASSERT_EQ(0, m[256].getu32());
+}

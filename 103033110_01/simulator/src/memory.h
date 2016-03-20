@@ -2,6 +2,7 @@
 #include <endian.h>
 #include <cstdint>
 #include <cstddef>
+#include <string.h>
 #include "errors.h"
 
 
@@ -119,6 +120,9 @@ public:
     }
     Proxy operator[] (size_t offset) {
         return at(offset);
+    }
+    void clear() {
+        memset(data, 0, Bytes);
     }
 };
 
