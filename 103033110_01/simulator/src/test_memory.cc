@@ -98,3 +98,48 @@ TEST(Memory2, MisalignGuard) {
 
     ASSERT_EQ(-1, m[0].gets32());
 }
+
+
+TEST(Memory2, MisalignError) {
+    ErrorState es;
+    DMemory m(1024, es);
+
+    m[1].getu32();
+
+    EXPECT_FALSE(es.warnings.any());
+    ASSERT_TRUE(es.fatals[DMisalign]);
+
+    es.fatals[DMisalign] = false;
+    ASSERT_FALSE(es.fatals.any());
+}
+
+
+TEST(Memory2, OverflowError) {
+    ErrorState es;
+    DMemory m(1024, es);
+
+    m[2000].getu32();
+
+    EXPECT_FALSE(es.warnings.any());
+    ASSERT_TRUE(es.fatals[DOverflow]);
+
+    es.fatals[DOverflow] = false;
+    ASSERT_FALSE(es.fatals.any());
+
+}
+
+
+TEST(Memory2, MisalignAndOverflow) {
+    ErrorState es;
+    DMemory m(1024, es);
+
+    m[1021].getu32();
+
+    EXPECT_FALSE(es.warnings.any());
+    ASSERT_TRUE(es.fatals[DOverflow]);
+    ASSERT_TRUE(es.fatals[DMisalign]);
+
+    es.fatals[DOverflow] = false;
+    es.fatals[DMisalign] = false;
+    ASSERT_FALSE(es.fatals.any());
+}
