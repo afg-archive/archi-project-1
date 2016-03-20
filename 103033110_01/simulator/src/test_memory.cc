@@ -3,7 +3,7 @@
 
 
 TEST(Memory2, ByteOrder) {
-    Memory m(4);
+    DMemory m(4);
     m[0].setu8(0x12);
     m[1].setu8(0x34);
     m[2].setu8(0x56);
@@ -22,7 +22,7 @@ TEST(Memory2, ByteOrder) {
 
 
 TEST(Memory2, GCCWTF) {
-    Memory m(4);
+    DMemory m(4);
 
     m[0].setu16(0x1234);
     ASSERT_EQ(0x12340000, m[0].getu32());
@@ -33,7 +33,7 @@ TEST(Memory2, GCCWTF) {
 
 
 TEST(Memory2, SetUnsigned) {
-    Memory m(4);
+    DMemory m(4);
 
     m[0].setu32(0x98765432);
 
@@ -54,14 +54,14 @@ TEST(Memory2, SetUnsigned) {
 
 
 TEST(Memory2, SetSigned) {
-    Memory m(4);
+    DMemory m(4);
 
     m[0].sets32(-1);
 }
 
 
 TEST(Memory2, SignedUnsigned) {
-    Memory m(4);
+    DMemory m(4);
 
     m[0].sets8(-1);
 
@@ -72,7 +72,7 @@ TEST(Memory2, SignedUnsigned) {
 
 
 TEST(Memory2, SignedUnsigned2) {
-    Memory m(4);
+    DMemory m(4);
 
     m[0].sets32(-1);
 
@@ -88,7 +88,7 @@ TEST(Memory2, SignedUnsigned2) {
 
 
 TEST(Memory2, MisalignGuard) {
-    Memory m(1024);
+    DMemory m(1024);
 
     m[0].sets32(-1);
 

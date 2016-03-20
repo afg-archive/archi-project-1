@@ -2,6 +2,7 @@
 #include <endian.h>
 #include <cstdint>
 #include <cstddef>
+#include "errors.h"
 
 
 template <class ResultType, class InputType>
@@ -12,6 +13,10 @@ ResultType type_convert(InputType value) {
 }
 
 
+template <
+    Fatal OverflowError,
+    Fatal MisalignError
+>
 class Memory {
     class Proxy {
     private:
@@ -84,9 +89,17 @@ class Memory {
     };
 public:
     const size_t Bytes;
+    ErrorState* esp;
     void* data;
 public:
-    Memory(size_t Bytes): Bytes(Bytes), data(new uint8_t[Bytes]()) {}
+    Memory(size_t Bytes, ErrorState& es):
+        Bytes(Bytes),
+        esp(&es),
+        data(new uint8_t[Bytes]()) {}
+    Memory(size_t Bytes):
+        Bytes(Bytes),
+        esp(nullptr),
+        data(new uint8_t[Bytes]()) {}
     ~Memory() {
         delete[] (uint8_t*)data;
     }
@@ -97,3 +110,8 @@ public:
         return at(offset);
     }
 };
+
+
+using DMemory = Memory<DOverflow, DMisalign>;
+using IMemory = Memory<IOverflow, IMisalign>;
+using RMemory = Memory<ROverflow, UnspecifiedMemoryError>;

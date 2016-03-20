@@ -1,30 +1,33 @@
 #pragma once
-#include <string.h>
+#include <bitset>
 
 
-enum Warning {
-    WriteToRegisterS0 = 1 << 0,
-    NumberOverflow = 1 << 1,
+enum Warning: uint32_t {
+    WriteToRegisterS0,
+    NumberOverflow,
+    N_WARNINGS,
 };
 
 
-enum FatalError {
-    DOverflow = 1 << 0,
-    DMisalign = 1 << 1,
-    IOverflow = 1 << 2,
-    IMisalign = 1 << 3,
-    ROverflow = 1 << 4,
-    RMisalign = 1 << 5,
+enum Fatal: uint32_t {
+    UnspecifiedMemoryError,
+    DOverflow,
+    DMisalign,
+    IOverflow,
+    IMisalign,
+    ROverflow,
+    RMisalign,
+    N_FATALS,
 };
 
 
 struct ErrorState {
-    Warning warning;
-    FatalError fatal;
-    ErrorState(): warning(0), fatal(0) {
+    std::bitset<N_WARNINGS> warnings;
+    std::bitset<N_FATALS> fatals;
+    ErrorState(): warnings(0), fatals(0) {
     }
     void clear() {
-        warning = 0;
-        fatal = 0;
+        warnings.reset();
+        fatals.reset();
     }
 };
