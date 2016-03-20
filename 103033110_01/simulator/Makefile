@@ -53,3 +53,5 @@ clean :
 	rm -f $(TESTS) gtest.a gtest_main.a gtest_main.o main.o \
 		$(test_sources:.cc=.o) $(test_sources:.cc=.d) \
 		single_cycle
+
+include main.d $(test_sources:.cc=.d)
