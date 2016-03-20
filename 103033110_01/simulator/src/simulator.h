@@ -96,6 +96,7 @@ public:
         write_snapshot();
         write_errors();
         if (es.fatals.any()) {
+            loghere << "Fatal error in cycle: " << cycle_count << std::endl;
             throw FatalHalt();
         }
     }

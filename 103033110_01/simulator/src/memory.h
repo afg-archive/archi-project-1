@@ -131,4 +131,3 @@ public:
 
 using DMemory = Memory<DOverflow, DMisalign>;
 using IMemory = Memory<IOverflow, IMisalign>;
-using RMemory = Memory<ROverflow, UnspecifiedMemoryError>;

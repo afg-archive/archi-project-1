@@ -11,13 +11,10 @@ enum Warning: uint32_t {
 
 
 enum Fatal: uint32_t {
-    UnspecifiedMemoryError,
     DOverflow,
     DMisalign,
     IOverflow,
     IMisalign,
-    ROverflow,
-    RMisalign,
     N_FATALS,
 };
 

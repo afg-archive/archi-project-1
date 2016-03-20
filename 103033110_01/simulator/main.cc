@@ -14,5 +14,9 @@ int main() {
     Simulator sim(regdump, errordump);
     sim.load_iimage(iimage);
     sim.load_dimage(dimage);
+    iimage.close();
+    dimage.close();
     sim.run();
+    errordump.close();
+    regdump.close();
 }
