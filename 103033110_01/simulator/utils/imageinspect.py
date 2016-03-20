@@ -173,10 +173,6 @@ def main(filename):
             'Signed', 'Unsigned', 'Hexadecimal', 'Addr', 'Meaning'))
         print(fs.replace(':', ':=').format('', '', '', '', ''))
 
-    with open(filename, mode='rb') as file:
-        initial, size = struct.unpack('>II', file.read(8))
-        data = struct.unpack('>' + 'I' * size, file.read(size * 4))
-
     print_head()
 
     def pfnumber(word, meaning, addr):
@@ -185,11 +181,18 @@ def main(filename):
                 word.signed, word.u, ' 0x{:08x}'.format(word.u), addr, meaning)
         )
 
-    pfnumber(Bits(initial), 'Initialize PC/SP to {}'.format(initial), 'N/A')
-    pfnumber(Bits(size), 'Load {} Bytes into I/D memory'.format(size), 'N/A')
-    for i, word in enumerate(data):
-        code = Code(word)
-        pfnumber(code, registry.explain(code), i * 4)
+    with open(filename, mode='rb') as file:
+        initial, = struct.unpack('>I', file.read(4))
+        pfnumber(
+            Bits(initial), 'Initialize PC/SP to {}'.format(initial), 'N/A')
+
+        size, = struct.unpack('>I', file.read(4))
+        pfnumber(
+            Bits(size), 'Load {} Words into I/D memory'.format(size), 'N/A')
+
+        for i in range(0, size):
+            code = Code(struct.unpack('>I', file.read(4))[0])
+            pfnumber(code, registry.explain(code), i * 4)
 
     if i > 18:
         print_head()
