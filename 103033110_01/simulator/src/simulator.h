@@ -27,6 +27,7 @@ uint32_t load_bigendian(std::istream& is) {
 
 
 class Halt: public std::exception {};
+class FatalHalt: public std::exception {};
 
 
 class Simulator {
@@ -92,8 +93,12 @@ public:
         load_dmem(size, is);
     }
     void cycle() {
+        es.clear();
         ++ cycle_count;
         execute(Code(imem->at(pc).getu32()));
+        if (es.fatals.any()) {
+            throw FatalHalt();
+        }
     }
     void run() {
         try {
