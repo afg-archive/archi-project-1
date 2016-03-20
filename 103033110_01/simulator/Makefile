@@ -38,7 +38,6 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
 
 
 sources = $(wildcard $(USER_DIR)/*.cc)
-include $(sources:.cc=.d)
 
 
 tests : $(TESTS)
@@ -87,3 +86,5 @@ test.out : gtest_main.a $(sources:.cc=.o)
 .PHONY: test
 test: tests
 	./test.out
+
+include $(sources:.cc=.d)
