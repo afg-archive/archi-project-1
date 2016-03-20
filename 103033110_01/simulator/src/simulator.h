@@ -60,7 +60,7 @@ public:
         delete imem;
         imem = new IMemory(size);
         auto actual = is.read(imem->buffer, size).gcount();
-        loghere << "loaded " << actual << "bytes I memory\n";
+        loghere << "loaded " << actual << " bytes I memory\n";
     }
     void load_iimage(std::istream& is) {
         load_pc(is);
@@ -76,7 +76,7 @@ public:
         delete dmem;
         dmem = new DMemory(1024);
         auto actual = is.read(dmem->buffer, std::min(1024ul, size)).gcount();
-        loghere << "loaded " << actual << "bytes D memory\n";
+        loghere << "loaded " << actual << " bytes D memory\n";
     }
     void load_dimage(std::istream& is) {
         load_sp(is);
