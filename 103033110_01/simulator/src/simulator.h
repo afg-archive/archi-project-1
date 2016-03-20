@@ -162,6 +162,7 @@ public:
     void execute_r_delegate(Code i) {
         switch (i.funct()) {
         case add:
+            R[i.rd()].s = alu.signed_add(R[i.rs()].s, R[i.rt()].s);
             break;
         case addu:
             break;
