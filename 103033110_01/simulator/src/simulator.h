@@ -96,11 +96,11 @@ public:
         execute(Code(imem->at(pc).getu32()));
     }
     void run() {
-        while (true) {
-            try {
+        try {
+            while (true) {
                 cycle();
-            } catch (const Halt&) {}
-        }
+            }
+        } catch (const Halt&) {}
     }
 
     // execute
