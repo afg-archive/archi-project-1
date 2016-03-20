@@ -96,6 +96,7 @@ public:
         es.clear();
         ++ cycle_count;
         execute(Code(imem->at(pc).getu32()));
+        write_errors();
         if (es.fatals.any()) {
             throw FatalHalt();
         }
@@ -105,7 +106,27 @@ public:
             while (true) {
                 cycle();
             }
-        } catch (const Halt&) {}
+        }
+        catch (const Halt&) {}
+        catch (const FatalHalt&) {}
+    }
+
+    void write_error(const char* str) {
+        errorhere << "In cycle " << cycle_count << ": " << str << "\n";
+    }
+    void write_warning_if(Warning w, const char* str) {
+        if (es.warnings[w]) write_error(str);
+    }
+    void write_fatal_if(Fatal f, const char* str) {
+        if (es.fatals[f]) write_error(str);
+    }
+    void write_errors() {
+        write_warning_if(WriteToRegisterS0, "Write $0 Error");
+        write_warning_if(NumberOverflow, "Number Overflow");
+        write_fatal_if(DOverflow, "Address Overflow");
+        write_fatal_if(DMisalign, "Misalignment Error");
+        write_fatal_if(IOverflow, "(ext) I memory address overflow");
+        write_fatal_if(IMisalign, "(ext) I memory address misalign");
     }
 
     // execute
