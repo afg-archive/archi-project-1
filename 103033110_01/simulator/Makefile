@@ -6,14 +6,13 @@ TEST_DIR = tests
 # the compiler doesn't generate warnings in Google Test headers.
 CPPFLAGS += -isystem $(GTEST_DIR)/include -I$(SRC_DIR) -MD -MP
 
-CXXFLAGS += -march=native -O3 -std=c++11 -g -Wall -Wextra -pthread
+CXXFLAGS += -march=native -flto -O3 -std=c++11 -g -Wall -Wextra -pthread
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
 GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
                 $(GTEST_DIR)/include/gtest/internal/*.h
 
-sources = $(wildcard $(SRC_DIR)/*.cc)
 test_sources = $(wildcard $(TEST_DIR)/*.cc)
 
 # Builds gtest.a and gtest_main.a.
@@ -39,9 +38,8 @@ gtest_main.o : $(GTEST_SRCS_)
 gtest_main.a : gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
 
-single_cycle:
-	@echo functionality not implemented
-	@exit 1
+single_cycle: main.o
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS)  $^ -o $@
 
 test.out : gtest_main.a $(sources:.cc=.o) $(test_sources:.cc=.o)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
@@ -52,8 +50,6 @@ test: test.out
 
 .PHONY: clean
 clean :
-	rm -f $(TESTS) gtest.a gtest_main.a gtest_main.o \
-		$(sources:.cc=.o) $(sources:.cc=.d) \
-		$(test_sources:.cc=.o) $(test_sources:.cc=.d)
-
-include $(sources:.cc=.d)
+	rm -f $(TESTS) gtest.a gtest_main.a gtest_main.o main.o \
+		$(test_sources:.cc=.o) $(test_sources:.cc=.d) \
+		single_cycle
