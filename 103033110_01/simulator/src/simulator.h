@@ -110,10 +110,14 @@ public:
             pc += 4;
             return;
         }
+        // A note on return vs break:
+        // if the instruction modifies PC, use return
+        // so pc += 4 won't be executed
+        // otherwise, use break.
         switch (i.opcode()) {
         case r_delegate:
             execute_r_delegate(i);
-            break;
+            return; // execute_r_delegate() is responsible to manipulate pc
         case addi:
             break;
         case addiu:
@@ -168,29 +172,39 @@ public:
             R[i.rd()].u = R[i.rs()].u + R[i.rt()].u;
             break;
         case sub:
+            R[i.rd()].s = alu.signed_add(R[i.rs()].s, -R[i.rt()].s);
             break;
         case and_:
+            R[i.rd()].u = R[i.rs()].u & R[i.rt()].u;
             break;
         case or_:
+            R[i.rd()].u = R[i.rs()].u | R[i.rt()].u;
             break;
         case xor_:
+            R[i.rd()].u = R[i.rs()].u ^ R[i.rt()].u;
             break;
         case nor:
+            R[i.rd()].u = ~(R[i.rs()].u | R[i.rt()].u);
             break;
         case nand:
+            R[i.rd()].u = ~(R[i.rs()].u & R[i.rt()].u);
             break;
         case slt:
+            R[i.rd()].u = R[i.rs()].s < R[i.rt()].s;
             break;
         case sll:
+            R[i.rd()].u = R[i.rt()].u << i.c_shamt();
             break;
         case srl:
+            R[i.rd()].u = R[i.rt()].u >> i.c_shamt();
             break;
         case sra:
-            pc += 4;
+            R[i.rd()].s = R[i.rt()].s >> i.c_shamt();
             break;
         case jr:
             pc = i.rs();
-            break;
+            return;
         }
+        pc += 4;
     }
 };
