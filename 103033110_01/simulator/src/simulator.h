@@ -36,7 +36,7 @@ public:
     uint32_t cycle_count;
     ErrorState es;
     ALU alu;
-    IMemory* imem;
+    IMemory I;
     DMemory M;
     RegisterSpace R;
     std::ostream& dumphere;
@@ -50,25 +50,20 @@ public:
         cycle_count(0),
         es(),
         alu(es),
-        imem(nullptr),
+        I(1024, es),
         M(1024, es),
         dumphere(dumphere),
         errorhere(errorhere),
         loghere(loghere)
     {}
 
-    ~Simulator() {
-        delete imem;
-    }
-
     void load_pc(std::istream& is) {
         pc = load_bigendian(is);
         loghere << "PC initialized to " << pc << '\n';
     }
     void load_imem(size_t size, std::istream& is) {
-        delete imem;
-        imem = new IMemory(size, es);
-        auto actual = is.read(imem->buffer, size).gcount();
+        I.clear();
+        auto actual = is.read(I.buffer, std::min(1024ul, size)).gcount();
         loghere << "loaded " << actual << " bytes I memory\n";
     }
     void load_iimage(std::istream& is) {
@@ -95,7 +90,7 @@ public:
     void cycle() {
         es.clear();
         ++ cycle_count;
-        execute(Code(imem->at(pc).getu32()));
+        execute(Code(I[pc].getu32()));
         write_errors();
         if (es.fatals.any()) {
             throw FatalHalt();

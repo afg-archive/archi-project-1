@@ -54,9 +54,9 @@ TEST(Simulator, LoadIMemory) {
     Simulator sim;
     sim.load_imem(8, iss);
 
-    EXPECT_EQ(8, sim.imem->Bytes);
-    EXPECT_EQ(0x90abcdef, sim.imem->at(0).getu32());
-    EXPECT_EQ(0x12345678, sim.imem->at(4).getu32());
+    EXPECT_EQ(1024, sim.I.Bytes);
+    EXPECT_EQ(0x90abcdef, sim.I.at(0).getu32());
+    EXPECT_EQ(0x12345678, sim.I.at(4).getu32());
 }
 
 
@@ -94,8 +94,8 @@ TEST(Simulator, LoadIImage) {
     sim.load_iimage(iss);
 
     EXPECT_EQ(0xf2569ade, sim.pc);
-    EXPECT_EQ(0x90abcdef, sim.imem->at(0).getu32());
-    EXPECT_EQ(0x12345678, sim.imem->at(4).getu32());
+    EXPECT_EQ(0x90abcdef, sim.I.at(0).getu32());
+    EXPECT_EQ(0x12345678, sim.I.at(4).getu32());
 }
 
 
@@ -129,8 +129,8 @@ TEST(Simulator, ErrorState) {
     sim.M[1024].getu32();
     EXPECT_TRUE(sim.es.fatals[DOverflow]);
 
-    sim.imem->at(2).getu32();
+    sim.I.at(2).getu32();
     EXPECT_TRUE(sim.es.fatals[IMisalign]);
-    sim.imem->at(8).getu32();
+    sim.I.at(1024).getu32();
     EXPECT_TRUE(sim.es.fatals[IOverflow]);
 }
