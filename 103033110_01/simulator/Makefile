@@ -50,8 +50,9 @@ test: test.out
 
 .PHONY: clean
 clean :
-	rm -f $(TESTS) gtest.a gtest_main.a gtest_main.o main.o \
-		$(test_sources:.cc=.o) $(test_sources:.cc=.d) \
-		single_cycle
+	rm -f $(TESTS) $(wildcard *.a) $(wildcard *.o) $(wildcard *.d) \
+		$(wildcard $(SRC_DIR)/*.d) \
+		$(wildcard $(TEST_DIR)/*.d) $(wildcard $(TEST_DIR)/*.o) \
+		single_cycle test.out
 
 -include main.d $(test_sources:.cc=.d)
