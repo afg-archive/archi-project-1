@@ -1,13 +1,16 @@
-#include <endian.h>
-#include <iostream>
-#include <exception>
-#include <stdexcept>
+#pragma once
+
 #include <algorithm>
-#include "memory.h"
-#include "errors.h"
+#include <endian.h>
+#include <exception>
+#include <iostream>
+#include <stdexcept>
+
 #include "code.h"
-#include "register.h"
+#include "errors.h"
 #include "instructions.h"
+#include "memory.h"
+#include "register.h"
 
 
 uint32_t load_bigendian(std::istream& is) {

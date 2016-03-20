@@ -1,8 +1,10 @@
 #pragma once
-#include <endian.h>
-#include <cstdint>
+
 #include <cstddef>
+#include <cstdint>
+#include <endian.h>
 #include <string.h>
+
 #include "errors.h"
 
 

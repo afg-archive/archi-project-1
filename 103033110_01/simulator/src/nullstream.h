@@ -1,3 +1,4 @@
+#pragma once
 // http://stackoverflow.com/a/7818394/4661520
 
 #include <iostream>
