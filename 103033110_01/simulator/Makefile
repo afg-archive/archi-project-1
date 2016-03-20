@@ -22,7 +22,7 @@ USER_DIR = src
 # Flags passed to the preprocessor.
 # Set Google Test's header directory as a system directory, such that
 # the compiler doesn't generate warnings in Google Test headers.
-CPPFLAGS += -isystem $(GTEST_DIR)/include
+CPPFLAGS += -isystem $(GTEST_DIR)/include -MD -MP
 
 # Flags passed to the C++ compiler.
 CXXFLAGS += -march=native -O3 -std=c++11 -g -Wall -Wextra -pthread
@@ -72,12 +72,6 @@ gtest_main.a : gtest-all.o gtest_main.o
 # Builds a sample test.  A test should link with either gtest.a or
 # gtest_main.a, depending on whether it defines its own main()
 # function.
-
-%.d: %.cc
-		@set -e; rm -f $@; \
-		$(CXX) -MM $(CPPFLAGS) $(CXXFLAGS) $< > $@.$$$$; \
-		sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
-		rm -f $@.$$$$
 
 test.out : gtest_main.a $(sources:.cc=.o)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
