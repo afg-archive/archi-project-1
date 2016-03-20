@@ -53,6 +53,7 @@ public:
         alu(es),
         I(1024, es),
         M(1024, es),
+        R(),
         dumphere(dumphere),
         errorhere(errorhere),
         loghere(loghere)
