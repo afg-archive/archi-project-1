@@ -93,6 +93,7 @@ public:
     }
     void cycle() {
         ++ cycle_count;
+        execute(Code(imem->at(pc).getu32()));
     }
     void run() {
         while (true) {

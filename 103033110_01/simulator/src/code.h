@@ -6,6 +6,8 @@
 class Code: public Word {
 public:
 
+    using Word::Word;
+
     #define alias(name, msb, lsb)   uint32_t name() const { return bits<msb, lsb>(); }
 
     alias(opcode, 31, 26);
