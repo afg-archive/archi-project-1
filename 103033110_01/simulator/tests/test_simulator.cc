@@ -64,7 +64,7 @@ TEST(Simulator, LoadDImage) {
     istringstream iss(
         string(
             "\xea\xcd\x43\x99"
-            "\x00\x00\x00\x08"
+            "\x00\x00\x00\x02"
             "\x12\x34\x56\x78"
             "\x90\xab\xcd\xef",
             16
@@ -83,7 +83,7 @@ TEST(Simulator, LoadIImage) {
     istringstream iss(
         string(
             "\xf2\x56\x9a\xde"
-            "\x00\x00\x00\x08"
+            "\x00\x00\x00\x02"
             "\x90\xab\xcd\xef"
             "\x12\x34\x56\x78",
             16
@@ -115,7 +115,7 @@ TEST(Simulator, ErrorState) {
     istringstream iss(
         string(
             "\xf2\x56\x9a\xde"
-            "\x00\x00\x00\x08"
+            "\x00\x00\x00\x02"
             "\x90\xab\xcd\xef"
             "\x12\x34\x56\x78",
             16

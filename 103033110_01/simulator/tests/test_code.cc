@@ -3,10 +3,9 @@
 
 
 TEST(Code, BitsAlias) {
-    Code c;
+    Code c(0b10100011001110101110101101110111);
     //          10987654321098765432109876543210
     //          ******-----*****-----*****------
-    c.u =     0b10100011001110101110101101110111;
     EXPECT_EQ(0b101000,                           c.opcode());
     EXPECT_EQ(      0b11001,                      c.rs());
     EXPECT_EQ(           0b11010,                 c.rt());
@@ -19,9 +18,8 @@ TEST(Code, BitsAlias) {
 
 
 TEST(Code, ImmediateSigned) {
-    Code c;
+    Code c(0b1111111111111111);
 
-    c.u = 0b1111111111111111;
     EXPECT_EQ(-1, c.c_imms());
 
     c.u = 0b1000000000000000;

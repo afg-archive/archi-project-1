@@ -69,9 +69,9 @@ public:
     }
     void load_iimage(std::istream& is) {
         load_pc(is);
-        auto size = load_bigendian(is);
-        loghere << size << " bytes to load into I memory\n";
-        load_imem(size, is);
+        auto nwords = load_bigendian(is);
+        loghere << nwords << " words to load into I memory\n";
+        load_imem(nwords * 4u, is);
     }
     void load_sp(std::istream& is) {
         R[29].u = load_bigendian(is);
@@ -84,9 +84,9 @@ public:
     }
     void load_dimage(std::istream& is) {
         load_sp(is);
-        auto size = load_bigendian(is);
-        loghere << size << " bytes to load into D memory\n";
-        load_dmem(size, is);
+        auto nwords = load_bigendian(is);
+        loghere << nwords << " words to load into D memory\n";
+        load_dmem(nwords * 4u, is);
     }
     void cycle() {
         es.clear();
@@ -118,7 +118,7 @@ public:
                      << std::setbase(16) << std::setw(8) << R[i].u
                      << '\n';
         }
-        dumphere << "PC : 0x"
+        dumphere << "PC: 0x"
                  << std::setbase(16) << std::setw(8) << pc << "\n\n\n";
     }
 
