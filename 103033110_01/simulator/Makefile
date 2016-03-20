@@ -52,6 +52,8 @@ test: test.out
 
 .PHONY: clean
 clean :
-	rm -f $(TESTS) gtest.a gtest_main.a gtest_main.o $(sources:.cc=.o) $(tests:.cc=.o)
+	rm -f $(TESTS) gtest.a gtest_main.a gtest_main.o \
+		$(sources:.cc=.o) $(sources:.cc=.d) \
+		$(test_sources:.cc=.o) $(test_sources:.cc=.d)
 
 include $(sources:.cc=.d)
