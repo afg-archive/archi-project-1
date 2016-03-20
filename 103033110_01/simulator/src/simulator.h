@@ -117,11 +117,11 @@ public:
             dumphere << '$'
                      << std::setbase(10) << std::setfill('0') << std::setw(2) << i
                      << ": 0x"
-                     << std::setbase(16) << std::setw(8) << R[i].u
+                     << std::setbase(16) << std::setw(8) << std::uppercase << R[i].u
                      << '\n';
         }
         dumphere << "PC: 0x"
-                 << std::setbase(16) << std::setw(8) << pc << "\n\n\n";
+                 << std::setbase(16) << std::setw(8) << std::uppercase << pc << "\n\n\n";
     }
 
     void write_error(const char* str) {
