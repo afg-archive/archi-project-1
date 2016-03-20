@@ -6,6 +6,13 @@
 using namespace std;
 
 
+TEST(Simulator, LoadBigEndian) {
+    istringstream iss("\x39\x23\x3a\x49");
+
+    ASSERT_EQ(0x39233a49, load_bigendian(iss));
+}
+
+
 TEST(Simulator, LoadPC) {
     istringstream iss("\xf2\x56\x9a\xde");
     Simulator sim;
