@@ -54,4 +54,4 @@ clean :
 		$(test_sources:.cc=.o) $(test_sources:.cc=.d) \
 		single_cycle
 
-include main.d $(test_sources:.cc=.d)
+-include main.d $(test_sources:.cc=.d)
