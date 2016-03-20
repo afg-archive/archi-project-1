@@ -114,53 +114,89 @@ public:
         // if the instruction modifies PC, use return
         // so pc += 4 won't be executed
         // otherwise, use break.
+        #define get_sc_addr() (alu.signed_add(R[i.rs()].u, i.c_imms()))
+        #define branch() (pc = alu.signed_add(alu.signed_add(pc, 4), 4 * i.c_imms()))
         switch (i.opcode()) {
         case r_delegate:
             execute_r_delegate(i);
             return; // execute_r_delegate() is responsible to manipulate pc
         case addi:
+            R[i.rt()].s = alu.signed_add(R[i.rs()].s, i.c_imms());
             break;
         case addiu:
+            R[i.rt()].u = R[i.rs()].u + i.c_immu();
             break;
         case lw:
+            R[i.rt()].u = M[get_sc_addr()].getu32();
             break;
         case lh:
+            R[i.rt()].s = M[get_sc_addr()].gets16();
             break;
         case lhu:
+            R[i.rt()].u = M[get_sc_addr()].getu16();
             break;
         case lb:
+            R[i.rt()].s = M[get_sc_addr()].gets8();
             break;
         case lbu:
+            R[i.rt()].u = M[get_sc_addr()].getu8();
             break;
         case sw:
+            M[get_sc_addr()].setu32(R[i.rt()].u);
             break;
         case sh:
+            M[get_sc_addr()].setu16(R[i.rt()].u & 0xffff);
             break;
         case sb:
+            M[get_sc_addr()].setu8(R[i.rt()].u & 0xff);
             break;
         case lui:
+            R[i.rt()].u = i.c_immu() << 16u;
             break;
         case andi:
+            R[i.rt()].u = R[i.rs()].u & i.c_immu();
             break;
         case ori:
+            R[i.rt()].u = R[i.rs()].u | i.c_immu();
             break;
         case nori:
+            R[i.rt()].u = ~(R[i.rs()].u | i.c_immu());
             break;
         case slti:
+            R[i.rt()].u = R[i.rs()].s < i.c_imms();
             break;
         case beq:
+            if (R[i.rs()].u == R[i.rt()].u) {
+                branch();
+                return;
+            }
             break;
         case bne:
+            if (R[i.rs()].u != R[i.rt()].u) {
+                branch();
+                return;
+            }
             break;
         case bgtz:
+            // XXX $s signed?
+            if (R[i.rs()].s > 0) {
+                branch();
+                return;
+            }
             break;
         case j:
-            break;
+            pc = Word(pc + 4u).bits<31, 28>() | 4u * i.c_addr();
+            return;
         case jal:
-            break;
+            R[31] = pc + 4u;
+            pc = Word(pc + 4u).bits<31, 28>() | 4u * i.c_addr();
+            return;
         case halt:
-            break;
+            throw Halt();
         }
+        #undef get_sc_addr
+        #undef branch
+        pc += 4;
     }
 
     void execute_r_delegate(Code i) {
