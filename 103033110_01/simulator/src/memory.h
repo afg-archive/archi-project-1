@@ -24,14 +24,22 @@ class Memory {
         size_t offset;
     public:
         Proxy(Memory& mem, size_t offset): mem(mem), offset(offset) {}
+    private:
+        void set_error(Fatal Error) {
+            if (mem.esp) {
+                mem.esp->set(Error);
+            }
+        }
         template <class T>
         bool check() const {
             bool clean = true;
             if (offset + sizeof(T) > mem.Bytes) {
                 clean = false;
+                set_error(OverflowError);
             }
             if (offset % sizeof(T)) {
                 clean = false;
+                set_error(MisalignError);
             }
             return clean;
         }
