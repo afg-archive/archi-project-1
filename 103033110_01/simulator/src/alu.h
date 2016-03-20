@@ -17,7 +17,7 @@ public:
     int32_t signed_add(int32_t x, int32_t y) {
         int32_t z = x + y;
         if (wrong_sign(x, y, z)) {
-            es.warnings[NumberOverflow];
+            es.warnings[NumberOverflow] = true;
         }
         return z;
     }

@@ -31,3 +31,14 @@ TEST(ALU, Overflow3) {
     EXPECT_TRUE(wrong_sign(-1, -1, 0));
     EXPECT_TRUE(wrong_sign(0, 0, -1));
 }
+
+
+TEST(ALU, ErrorState) {
+    ErrorState es;
+    ALU alu(es);
+
+    alu.signed_add(posh, posh);
+
+    EXPECT_TRUE(es.warnings[NumberOverflow]);
+    EXPECT_FALSE(es.fatals.any());
+}
