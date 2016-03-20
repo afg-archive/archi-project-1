@@ -63,16 +63,16 @@ public:
         pc = load_bigendian(is);
         loghere << "PC initialized to " << pc << '\n';
     }
-    void load_imem(size_t size, std::istream& is) {
+    void load_imem(size_t location, size_t size, std::istream& is) {
         I.clear();
-        auto actual = is.read(I.buffer, std::min(1024ul, size)).gcount();
+        auto actual = is.read(I.buffer + location, std::min(1024ul, size)).gcount();
         loghere << "loaded " << actual << " bytes I memory\n";
     }
     void load_iimage(std::istream& is) {
         load_pc(is);
         auto nwords = load_bigendian(is);
         loghere << nwords << " words to load into I memory\n";
-        load_imem(nwords * 4u, is);
+        load_imem(pc, nwords * 4u, is);
     }
     void load_sp(std::istream& is) {
         R[29].u = load_bigendian(is);

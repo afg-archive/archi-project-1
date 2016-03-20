@@ -52,7 +52,7 @@ TEST(Simulator, LoadIMemory) {
         "\x12\x34\x56\x78"
     );
     Simulator sim;
-    sim.load_imem(8, iss);
+    sim.load_imem(0, 8, iss);
 
     EXPECT_EQ(1024, sim.I.Bytes);
     EXPECT_EQ(0x90abcdef, sim.I.at(0).getu32());
@@ -82,7 +82,7 @@ TEST(Simulator, LoadDImage) {
 TEST(Simulator, LoadIImage) {
     istringstream iss(
         string(
-            "\xf2\x56\x9a\xde"
+            "\x00\x00\x00\xf0"
             "\x00\x00\x00\x02"
             "\x90\xab\xcd\xef"
             "\x12\x34\x56\x78",
@@ -93,9 +93,9 @@ TEST(Simulator, LoadIImage) {
     Simulator sim;
     sim.load_iimage(iss);
 
-    EXPECT_EQ(0xf2569ade, sim.pc);
-    EXPECT_EQ(0x90abcdef, sim.I.at(0).getu32());
-    EXPECT_EQ(0x12345678, sim.I.at(4).getu32());
+    EXPECT_EQ(0xf0, sim.pc);
+    EXPECT_EQ(0x90abcdef, sim.I.at(0 + 0xf0).getu32());
+    EXPECT_EQ(0x12345678, sim.I.at(4 + 0xf0).getu32());
 }
 
 
@@ -114,7 +114,7 @@ TEST(Simulator, ErrorState) {
 
     istringstream iss(
         string(
-            "\xf2\x56\x9a\xde"
+            "\x00\x00\x01\x24"
             "\x00\x00\x00\x02"
             "\x90\xab\xcd\xef"
             "\x12\x34\x56\x78",
