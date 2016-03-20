@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "alu.h"
 #include "code.h"
 #include "errors.h"
 #include "instructions.h"
@@ -33,6 +34,7 @@ public:
     uint32_t pc;
     uint32_t cycle_count;
     ErrorState es;
+    ALU alu;
     IMemory* imem;
     DMemory M;
     RegisterSpace R;
@@ -46,6 +48,7 @@ public:
         pc(0),
         cycle_count(0),
         es(),
+        alu(es),
         imem(nullptr),
         M(1024, es),
         dumphere(dumphere),
