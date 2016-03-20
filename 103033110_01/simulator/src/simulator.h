@@ -64,6 +64,9 @@ public:
         loghere << "PC initialized to " << pc << '\n';
     }
     void load_imem(size_t location, size_t size, std::istream& is) {
+        if (location % 4ul) {
+            throw std::runtime_error("PC location is not a multiple of 4, cannot load memory!");
+        }
         I.clear();
         auto actual = is.read(I.buffer + location, std::min(1024ul, size)).gcount();
         loghere << "loaded " << actual << " bytes I memory\n";
