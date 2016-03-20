@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <endian.h>
 #include <exception>
+#include <iomanip>
 #include <iostream>
 #include <stdexcept>
 
@@ -91,12 +92,14 @@ public:
         es.clear();
         ++ cycle_count;
         execute(Code(I[pc].getu32()));
+        write_snapshot();
         write_errors();
         if (es.fatals.any()) {
             throw FatalHalt();
         }
     }
     void run() {
+        write_snapshot();
         try {
             while (true) {
                 cycle();
@@ -104,6 +107,19 @@ public:
         }
         catch (const Halt&) {}
         catch (const FatalHalt&) {}
+    }
+
+    void write_snapshot() {
+        dumphere << "cycle " << cycle_count << '\n';
+        for (size_t i = 0ul; i < 32ul; ++ i) {
+            dumphere << '$'
+                     << std::setbase(10) << std::setfill('0') << std::setw(2) << i
+                     << ": 0x"
+                     << std::setbase(16) << std::setw(8) << R[i].u
+                     << '\n';
+        }
+        dumphere << "PC : 0x"
+                 << std::setbase(16) << std::setw(8) << pc << "\n\n\n";
     }
 
     void write_error(const char* str) {
