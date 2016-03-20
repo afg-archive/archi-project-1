@@ -179,8 +179,10 @@ public:
         case srl:
             break;
         case sra:
+            pc += 4;
             break;
         case jr:
+            pc = i.rs();
             break;
         }
     }
