@@ -27,7 +27,7 @@ TEST(Simulator, LoadSP) {
     Simulator sim;
     sim.load_sp(iss);
 
-    ASSERT_EQ(0xeacd4399, sim.rmem->at(29 * 4).getu32());
+    ASSERT_EQ(0xeacd4399, sim.R[29].u);
 }
 
 
@@ -73,7 +73,7 @@ TEST(Simulator, LoadDImage) {
     Simulator sim;
     sim.load_dimage(iss);
 
-    EXPECT_EQ(0xeacd4399, sim.rmem->at(29 * 4).getu32());
+    EXPECT_EQ(0xeacd4399, sim.R[29].u);
     EXPECT_EQ(0x12345678, sim.dmem->at(0).getu32());
     EXPECT_EQ(0x90abcdef, sim.dmem->at(4).getu32());
 }
@@ -103,7 +103,7 @@ TEST(Simulator, RMemory) {
     Simulator sim;
 
     for (uint32_t i = 0; i < 32u; ++ i) {
-        sim.rmem->at(i * 4).setu32(0xe9234927 + i);
-        EXPECT_EQ(0xe9234927 + i, sim.rmem->at(i * 4).getu32());
+        sim.R[i].u = 0xe9234927 + i;
+        EXPECT_EQ(0xe9234927 + i, sim.R[i].u);
     }
 }

@@ -6,6 +6,7 @@
 #include "memory.h"
 #include "errors.h"
 #include "code.h"
+#include "register.h"
 #include "instructions.h"
 
 
@@ -30,7 +31,7 @@ public:
     uint32_t cycle_count;
     IMemory* imem;
     DMemory* dmem;
-    RMemory* rmem;
+    RegisterSpace R;
     std::ostream& dumphere;
     std::ostream& errorhere;
     std::ostream& loghere;
@@ -42,7 +43,6 @@ public:
         cycle_count(0),
         imem(nullptr),
         dmem(nullptr),
-        rmem(new RMemory(32 * 4)),
         dumphere(dumphere),
         errorhere(errorhere),
         loghere(loghere)
@@ -51,7 +51,6 @@ public:
     ~Simulator() {
         delete imem;
         delete dmem;
-        delete rmem;
     }
 
     void load_pc(std::istream& is) {
@@ -71,8 +70,8 @@ public:
         load_imem(size, is);
     }
     void load_sp(std::istream& is) {
-        rmem->at(29 * 4).setu32(load_bigendian(is));
-        loghere << "SP ($29) initialized to " << rmem->at(29 * 4).getu32() << '\n';
+        R[29].u = load_bigendian(is);
+        loghere << "SP ($29) initialized to " << R[29].u << '\n';
     }
     void load_dmem(size_t size, std::istream& is) {
         delete dmem;
