@@ -32,6 +32,7 @@ class Simulator {
 public:
     uint32_t pc;
     uint32_t cycle_count;
+    ErrorState es;
     IMemory* imem;
     DMemory M;
     RegisterSpace R;
@@ -44,8 +45,9 @@ public:
         std::ostream& loghere = std::cout):
         pc(0),
         cycle_count(0),
+        es(),
         imem(nullptr),
-        M(1024),
+        M(1024, es),
         dumphere(dumphere),
         errorhere(errorhere),
         loghere(loghere)
@@ -61,7 +63,7 @@ public:
     }
     void load_imem(size_t size, std::istream& is) {
         delete imem;
-        imem = new IMemory(size);
+        imem = new IMemory(size, es);
         auto actual = is.read(imem->buffer, size).gcount();
         loghere << "loaded " << actual << " bytes I memory\n";
     }

@@ -107,3 +107,30 @@ TEST(Simulator, RMemory) {
         EXPECT_EQ(0xe9234927 + i, sim.R[i].u);
     }
 }
+
+
+TEST(Simulator, ErrorState) {
+    Simulator sim;
+
+    istringstream iss(
+        string(
+            "\xf2\x56\x9a\xde"
+            "\x00\x00\x00\x08"
+            "\x90\xab\xcd\xef"
+            "\x12\x34\x56\x78",
+            16
+        )
+    );
+
+    sim.load_iimage(iss);
+
+    sim.M[2].getu32();
+    EXPECT_TRUE(sim.es.fatals[DMisalign]);
+    sim.M[1024].getu32();
+    EXPECT_TRUE(sim.es.fatals[DOverflow]);
+
+    sim.imem->at(2).getu32();
+    EXPECT_TRUE(sim.es.fatals[IMisalign]);
+    sim.imem->at(8).getu32();
+    EXPECT_TRUE(sim.es.fatals[IOverflow]);
+}
