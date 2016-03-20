@@ -30,6 +30,7 @@ public:
     uint32_t pc;
     uint32_t cycle_count;
     IMemory* imem;
+    DMemory M;
     DMemory* dmem;
     RegisterSpace R;
     std::ostream& dumphere;
@@ -42,7 +43,8 @@ public:
         pc(0),
         cycle_count(0),
         imem(nullptr),
-        dmem(nullptr),
+        M(1024),
+        dmem(&M),
         dumphere(dumphere),
         errorhere(errorhere),
         loghere(loghere)
@@ -50,7 +52,6 @@ public:
 
     ~Simulator() {
         delete imem;
-        delete dmem;
     }
 
     void load_pc(std::istream& is) {
@@ -74,8 +75,7 @@ public:
         loghere << "SP ($29) initialized to " << R[29].u << '\n';
     }
     void load_dmem(size_t size, std::istream& is) {
-        delete dmem;
-        dmem = new DMemory(1024);
+        // M.clear();
         auto actual = is.read(dmem->buffer, std::min(1024ul, size)).gcount();
         loghere << "loaded " << actual << " bytes D memory\n";
     }
