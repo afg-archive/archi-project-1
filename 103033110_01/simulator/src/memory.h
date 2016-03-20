@@ -98,18 +98,21 @@ class Memory {
 public:
     const size_t Bytes;
     ErrorState* esp;
+    char* buffer;
     void* data;
 public:
     Memory(size_t Bytes, ErrorState& es):
         Bytes(Bytes),
         esp(&es),
-        data(new uint8_t[Bytes]()) {}
+        buffer(new char[Bytes]()),
+        data(buffer) {}
     Memory(size_t Bytes):
         Bytes(Bytes),
         esp(nullptr),
-        data(new uint8_t[Bytes]()) {}
+        buffer(new char[Bytes]()),
+        data(buffer) {}
     ~Memory() {
-        delete[] (uint8_t*)data;
+        delete[] buffer;
     }
     Proxy at(size_t offset) {
         return Proxy(*this, offset);
