@@ -164,7 +164,7 @@ i(0x3f, dis='halt')
 del i
 
 
-def main(filename):
+def main(filename, iim=False):
     fs = '{:>11}  {:>11}  {:>11}  {:>4}  {:<34}'
 
     def print_head():
@@ -184,19 +184,31 @@ def main(filename):
     with open(filename, mode='rb') as file:
         initial, = struct.unpack('>I', file.read(4))
         pfnumber(
-            Bits(initial), 'Initialize PC/SP to {}'.format(initial), 'N/A')
+            Bits(initial), 'Initialize {} to {}'.format(
+                'PC' if iim else 'SP',
+                initial), 'N/A')
 
         size, = struct.unpack('>I', file.read(4))
         pfnumber(
-            Bits(size), 'Load {} Words into I/D memory'.format(size), 'N/A')
+            Bits(size), 'Load {} Words into {} memory'.format(
+                size,
+                'I' if iim else 'D'
+            ), 'N/A')
 
-        for i in range(0, size):
+        i = 0
+        for i in range(iim and initial // 4, (iim and initial // 4) + size):
             code = Code(struct.unpack('>I', file.read(4))[0])
             pfnumber(code, registry.explain(code), i * 4)
 
-    if i > 18:
+    if i > 20:
         print_head()
 
 
 if __name__ == '__main__':
-    main(sys.argv[1])
+    if not (
+        sys.argv[1].endswith('iimage.bin') or
+        sys.argv[1].endswith('dimage.bin')
+    ):
+        raise SystemExit(
+            'Error: filename must ends with iimage.bin or dimage.bin')
+    main(sys.argv[1], sys.argv[1].endswith('iimage.bin'))
