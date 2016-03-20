@@ -5,7 +5,7 @@
 class Code: public Word {
 public:
 
-    #define alias(name, msb, lsb)   uint32_t name() const { return bits(msb, lsb); }
+    #define alias(name, msb, lsb)   uint32_t name() const { return bits<msb, lsb>(); }
 
     alias(opcode, 31, 26);
     alias(rs, 25, 21);

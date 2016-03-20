@@ -16,12 +16,12 @@ TEST(WordTest, SignedUnsignedConversion) {
 TEST(Word, GetBits) {
     Word w;
     w.u = 0b11111111111111111111111111111111;
-    ASSERT_EQ(0b111, w.bits(5, 3));
-    ASSERT_EQ(0xff, w.bits(26, 19));
+    ASSERT_EQ(0b111, (w.bits<5, 3>)());
+    ASSERT_EQ(0xff, (w.bits<26, 19>)());
 
     w.u = 0b10101010101010101010000000000000;
-    ASSERT_EQ(0b101, w.bits(29, 27));
-    ASSERT_EQ(0, w.bits(12, 0));
+    ASSERT_EQ(0b101, (w.bits<29, 27>)());
+    ASSERT_EQ(0, (w.bits<12, 0>)());
 }
 
 
