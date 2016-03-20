@@ -90,7 +90,10 @@ public:
     ~Memory() {
         delete[] (uint8_t*)data;
     }
-    Proxy operator[] (size_t offset) {
+    Proxy at(size_t offset) {
         return Proxy(*this, offset);
+    }
+    Proxy operator[] (size_t offset) {
+        return at(offset);
     }
 };
