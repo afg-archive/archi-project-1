@@ -100,6 +100,11 @@ public:
     // execute
 
     void execute(Code i) {
+        if (not i.u) {
+            // NOP
+            pc += 4;
+            return;
+        }
         switch (i.opcode()) {
         case r_delegate:
             execute_r_delegate(i);
