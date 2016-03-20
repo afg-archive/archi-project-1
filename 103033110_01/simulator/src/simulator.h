@@ -165,6 +165,7 @@ public:
             R[i.rd()].s = alu.signed_add(R[i.rs()].s, R[i.rt()].s);
             break;
         case addu:
+            R[i.rd()].u = R[i.rs()].u + R[i.rt()].u;
             break;
         case sub:
             break;
