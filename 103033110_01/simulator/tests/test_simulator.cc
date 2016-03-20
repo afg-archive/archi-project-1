@@ -40,9 +40,9 @@ TEST(Simulator, LoadDMemory) {
     Simulator sim;
     sim.load_dmem(8, iss);
 
-    EXPECT_EQ(1024, sim.dmem->Bytes);
-    EXPECT_EQ(0x12345678, sim.dmem->at(0).getu32());
-    EXPECT_EQ(0x90abcdef, sim.dmem->at(4).getu32());
+    EXPECT_EQ(1024, sim.M.Bytes);
+    EXPECT_EQ(0x12345678, sim.M[0].getu32());
+    EXPECT_EQ(0x90abcdef, sim.M[4].getu32());
 }
 
 
@@ -74,8 +74,8 @@ TEST(Simulator, LoadDImage) {
     sim.load_dimage(iss);
 
     EXPECT_EQ(0xeacd4399, sim.R[29].u);
-    EXPECT_EQ(0x12345678, sim.dmem->at(0).getu32());
-    EXPECT_EQ(0x90abcdef, sim.dmem->at(4).getu32());
+    EXPECT_EQ(0x12345678, sim.M[0].getu32());
+    EXPECT_EQ(0x90abcdef, sim.M[4].getu32());
 }
 
 

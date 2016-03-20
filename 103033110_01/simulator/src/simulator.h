@@ -31,7 +31,6 @@ public:
     uint32_t cycle_count;
     IMemory* imem;
     DMemory M;
-    DMemory* dmem;
     RegisterSpace R;
     std::ostream& dumphere;
     std::ostream& errorhere;
@@ -44,7 +43,6 @@ public:
         cycle_count(0),
         imem(nullptr),
         M(1024),
-        dmem(&M),
         dumphere(dumphere),
         errorhere(errorhere),
         loghere(loghere)
@@ -75,8 +73,8 @@ public:
         loghere << "SP ($29) initialized to " << R[29].u << '\n';
     }
     void load_dmem(size_t size, std::istream& is) {
-        // M.clear();
-        auto actual = is.read(dmem->buffer, std::min(1024ul, size)).gcount();
+        M.clear();
+        auto actual = is.read(M.buffer, std::min(1024ul, size)).gcount();
         loghere << "loaded " << actual << " bytes D memory\n";
     }
     void load_dimage(std::istream& is) {
