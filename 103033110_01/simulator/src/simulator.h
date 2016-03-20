@@ -5,6 +5,8 @@
 #include <algorithm>
 #include "memory.h"
 #include "errors.h"
+#include "code.h"
+#include "instructions.h"
 
 
 uint32_t load_bigendian(std::istream& is) {
@@ -92,6 +94,89 @@ public:
             try {
                 cycle();
             } catch (const Halt&) {}
+        }
+    }
+
+    // execute
+
+    void execute(Code i) {
+        switch (i.opcode()) {
+        case r_delegate:
+            execute_r_delegate(i);
+            break;
+        case addi:
+            break;
+        case addiu:
+            break;
+        case lw:
+            break;
+        case lh:
+            break;
+        case lhu:
+            break;
+        case lb:
+            break;
+        case lbu:
+            break;
+        case sw:
+            break;
+        case sh:
+            break;
+        case sb:
+            break;
+        case lui:
+            break;
+        case andi:
+            break;
+        case ori:
+            break;
+        case nori:
+            break;
+        case slti:
+            break;
+        case beq:
+            break;
+        case bne:
+            break;
+        case bgtz:
+            break;
+        case j:
+            break;
+        case jal:
+            break;
+        case halt:
+            break;
+        }
+    }
+
+    void execute_r_delegate(Code i) {
+        switch (i.funct()) {
+        case add:
+            break;
+        case addu:
+            break;
+        case sub:
+            break;
+        case and_:
+            break;
+        case or_:
+            break;
+        case xor_:
+            break;
+        case nor:
+            break;
+        case nand:
+            break;
+        case slt:
+            break;
+        case sll:
+            break;
+        case srl:
+            break;
+        case sra:
+            break;
+        case jr:
+            break;
         }
     }
 };
