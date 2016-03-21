@@ -152,11 +152,6 @@ public:
     // execute
 
     void execute(Code i) {
-        if (not i.u) {
-            // NOP
-            pc += 4;
-            return;
-        }
         // A note on return vs break:
         // if the instruction modifies PC, use return
         // so pc += 4 won't be executed
@@ -289,6 +284,10 @@ public:
             R[i.rd()].u = R[i.rs()].s < R[i.rt()].s;
             break;
         case sll:
+            if (i.rd() == 0 and i.rt() == 0 and i.c_shamt() == 0) { // NOP
+                pc += 4;
+                return;
+            }
             R[i.rd()].u = R[i.rt()].u << i.c_shamt();
             break;
         case srl:
