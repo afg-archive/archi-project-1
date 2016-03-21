@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-import sys
-import struct
 import ctypes
+import struct
+import sys
 
 
 class BitsBase(ctypes.Union):
@@ -131,7 +131,7 @@ i(funct=0x22, dis='sub ${d}, ${s}, ${t}')
 i(funct=0x24, dis='and ${d}, ${s}, ${t}')
 i(funct=0x25, dis='or ${d}, ${s}, ${t}')
 i(funct=0x26, dis='xor ${d}, ${s}, ${t}')
-i(funct=0x27, dis='nand ${d}, ${s}, ${t}')
+i(funct=0x27, dis='nor ${d}, ${s}, ${t}')
 i(funct=0x28, dis='nand ${d}, ${s}, ${t}')
 i(funct=0x2a, dis='slt ${d}, ${s}, ${t}')
 i(funct=0x00, dis='sll ${d}, ${t}, {c5}')
