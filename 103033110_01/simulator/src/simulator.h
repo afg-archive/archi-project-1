@@ -99,12 +99,12 @@ public:
         } catch (const Halt&) {
             return false;
         }
-        write_snapshot();
         write_errors();
         if (es.fatals.any()) {
             loghere << "Fatal error in cycle: " << std::setbase(10) << cycle_count << std::endl;
             return false;
         }
+        write_snapshot();
         return true;
     }
     void run() {
