@@ -28,7 +28,6 @@ uint32_t load_bigendian(std::istream& is) {
 
 
 class Halt: public std::exception {};
-class FatalHalt: public std::exception {};
 
 
 class Simulator {
@@ -92,26 +91,25 @@ public:
         loghere << nwords << " words to load into D memory\n";
         load_dmem(nwords * 4u, is);
     }
-    void cycle() {
+    bool cycle() {
         es.clear();
         ++ cycle_count;
-        execute(Code(I[pc].getu32()));
+        try {
+            execute(Code(I[pc].getu32()));
+        } catch (const Halt&) {
+            return false;
+        }
         write_snapshot();
         write_errors();
         if (es.fatals.any()) {
             loghere << "Fatal error in cycle: " << std::setbase(10) << cycle_count << std::endl;
-            throw FatalHalt();
+            return false;
         }
+        return true;
     }
     void run() {
         write_snapshot();
-        try {
-            while (true) {
-                cycle();
-            }
-        }
-        catch (const Halt&) {}
-        catch (const FatalHalt&) {}
+        while (cycle());
     }
 
     void write_snapshot() {
@@ -145,6 +143,12 @@ public:
         write_fatal_if(IMisalign, "(ext) I memory address misalign");
     }
 
+    void check_r0(size_t offset) {
+        if (not offset) {
+            es.warnings[WriteToRegisterS0] = true;
+        }
+    }
+
     // execute
 
     void execute(Code i) {
@@ -164,24 +168,31 @@ public:
             execute_r_delegate(i);
             return; // execute_r_delegate() is responsible to manipulate pc
         case addi:
+            check_r0(i.rt());
             R[i.rt()].s = alu.signed_add(R[i.rs()].s, i.c_imms());
             break;
         case addiu:
+            check_r0(i.rt());
             R[i.rt()].u = R[i.rs()].u + i.c_immu();
             break;
         case lw:
+            check_r0(i.rt());
             R[i.rt()].u = M[get_sc_addr()].getu32();
             break;
         case lh:
+            check_r0(i.rt());
             R[i.rt()].s = M[get_sc_addr()].gets16();
             break;
         case lhu:
+            check_r0(i.rt());
             R[i.rt()].u = M[get_sc_addr()].getu16();
             break;
         case lb:
+            check_r0(i.rt());
             R[i.rt()].s = M[get_sc_addr()].gets8();
             break;
         case lbu:
+            check_r0(i.rt());
             R[i.rt()].u = M[get_sc_addr()].getu8();
             break;
         case sw:
@@ -194,18 +205,23 @@ public:
             M[get_sc_addr()].setu8(R[i.rt()].u & 0xff);
             break;
         case lui:
+            check_r0(i.rt());
             R[i.rt()].u = i.c_immu() << 16u;
             break;
         case andi:
+            check_r0(i.rt());
             R[i.rt()].u = R[i.rs()].u & i.c_immu();
             break;
         case ori:
+            check_r0(i.rt());
             R[i.rt()].u = R[i.rs()].u | i.c_immu();
             break;
         case nori:
+            check_r0(i.rt());
             R[i.rt()].u = ~(R[i.rs()].u | i.c_immu());
             break;
         case slti:
+            check_r0(i.rt());
             R[i.rt()].u = R[i.rs()].s < i.c_imms();
             break;
         case beq:
@@ -243,6 +259,7 @@ public:
     }
 
     void execute_r_delegate(Code i) {
+        // check r0 if no break
         switch (i.funct()) {
         case add:
             R[i.rd()].s = alu.signed_add(R[i.rs()].s, R[i.rt()].s);
@@ -284,6 +301,7 @@ public:
             pc = R[i.rs()].u;
             return;
         }
+        check_r0(i.rd());
         pc += 4;
     }
 };
