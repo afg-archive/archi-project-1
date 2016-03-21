@@ -281,7 +281,7 @@ public:
             R[i.rd()].s = R[i.rt()].s >> i.c_shamt();
             break;
         case jr:
-            pc = i.rs();
+            pc = R[i.rs()].u;
             return;
         }
         pc += 4;

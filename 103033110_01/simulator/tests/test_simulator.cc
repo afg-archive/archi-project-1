@@ -104,7 +104,7 @@ TEST(Simulator, RMemory) {
 
     for (uint32_t i = 0; i < 32u; ++ i) {
         sim.R[i].u = 0xe9234927 + i;
-        EXPECT_EQ(0xe9234927 + i, sim.R[i].u);
+        EXPECT_EQ(i ? 0xe9234927 + i : 0, sim.R[i].u);
     }
 }
 
