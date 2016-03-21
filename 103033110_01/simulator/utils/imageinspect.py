@@ -29,6 +29,20 @@ class BitsBase(ctypes.Union):
             assert item.step is None
             return self.part(item.start, item.stop)
 
+    def __setitem__(self, item, value):
+        if isinstance(item, int):
+            assert 0 <= item < 32
+            assert value in (0, 1)
+            self.s &= ~(1 << item)
+            self.u |= value << item
+        else:
+            assert item.step is None
+            assert 32 > item.start >= item.stop >= 0
+            delt = item.start - item.stop
+            assert 0 <= value < (2 << delt)
+            self.u &= ~(((2 << delt) - 1) << item.stop)
+            self.u |= value << item.stop
+
     def __eq__(self, other):
         raise TypeError("Don't compare this directly")
 
