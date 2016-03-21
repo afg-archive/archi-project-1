@@ -99,7 +99,7 @@ public:
         write_snapshot();
         write_errors();
         if (es.fatals.any()) {
-            loghere << "Fatal error in cycle: " << cycle_count << std::endl;
+            loghere << "Fatal error in cycle: " << std::setbase(10) << cycle_count << std::endl;
             throw FatalHalt();
         }
     }
@@ -115,7 +115,7 @@ public:
     }
 
     void write_snapshot() {
-        dumphere << "cycle " << cycle_count << '\n';
+        dumphere << "cycle " << std::setbase(10) << cycle_count << '\n';
         for (size_t i = 0ul; i < 32ul; ++ i) {
             dumphere << '$'
                      << std::setbase(10) << std::setfill('0') << std::setw(2) << i
@@ -128,7 +128,7 @@ public:
     }
 
     void write_error(const char* str) {
-        errorhere << "In cycle " << cycle_count << ": " << str << "\n";
+        errorhere << "In cycle " << std::setbase(10) << cycle_count << ": " << str << "\n";
     }
     void write_warning_if(Warning w, const char* str) {
         if (es.warnings[w]) write_error(str);
