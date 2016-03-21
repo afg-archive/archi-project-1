@@ -12,6 +12,6 @@ public:
         if (not offset) {
             data[0].u = 0;
         }
-        return data[0];
+        return data[offset];
     }
 };
