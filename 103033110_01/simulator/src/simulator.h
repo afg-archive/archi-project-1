@@ -168,7 +168,7 @@ public:
             break;
         case addiu:
             check_r0(i.rt());
-            R[i.rt()].u = R[i.rs()].u + i.c_immu();
+            R[i.rt()].s = R[i.rs()].s + i.c_imms();   // XXX wait for response
             break;
         case lw:
             check_r0(i.rt());
@@ -232,7 +232,6 @@ public:
             }
             break;
         case bgtz:
-            // XXX $s signed?
             if (R[i.rs()].s > 0) {
                 branch();
                 return;
