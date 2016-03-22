@@ -26,9 +26,13 @@ halt()  # 12
 halt()  # 16
 jal((28 + initpc) // 4)  # 20
 halt()  # 24
+u2(initpc + 40)  # 28
+jr(u2)  # 32
 
 # sll should not emit Write $0 Error
-sll(0, 0, 0)  # 28
+sll(0, 0, 0)  # 36
+sll(0, 0, 0)
+sll(0, 0, 0)
 sll(0, 0, 0)
 sll(0, 0, 0)
 sll(0, 0, 0)
