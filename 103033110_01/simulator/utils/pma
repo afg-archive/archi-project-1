@@ -17,6 +17,20 @@ def write_be32(file, *values):
     file.write(struct.pack('>' + 'I' * len(values), *values))
 
 
+initial_pc = 0
+initial_sp = 0
+
+
+def set_pc(value):
+    global initial_pc
+    initial_pc = value
+
+
+def set_sp(value):
+    global initial_sp
+    initial_sp = value
+
+
 class DImage:
 
     class Full(Exception):
@@ -45,7 +59,7 @@ class DImage:
         assert not address % 4
         return self.raw[address // 4]
 
-    def write(self, initial_sp=0):
+    def write(self):
         with open('dimage.bin', mode='wb') as file:
             write_be32(file, initial_sp)
             write_be32(file, 256)
@@ -142,14 +156,14 @@ instructions = []
 
 def emit(unsigned):
     import imageinspect
-    print('{:<24}  # offset={}'.format(
+    print('{:<24}  # PC = {}'.format(
         imageinspect.registry.explain(imageinspect.Code(unsigned)),
-        len(instructions) * 4
+        len(instructions) * 4 + initial_pc
     ))
     instructions.append(unsigned)
 
 
-def write_iimage(initial_pc=0):
+def write_iimage():
     assert initial_pc % 4 == 0
     assert len(instructions) * 4 + initial_pc < 1024
     with open('iimage.bin', mode='wb') as file:
@@ -332,9 +346,9 @@ jal = C(0x03)
 halt = HALT()
 
 
-def finish(initial_pc=0, initial_sp=0):
-    write_iimage(initial_pc)
-    dimage.write(initial_sp)
+def finish():
+    write_iimage()
+    dimage.write()
 
 
 if __name__ == '__main__':
