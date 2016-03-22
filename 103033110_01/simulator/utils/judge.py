@@ -34,7 +34,7 @@ def validate_testcase(directory):
     elif not os.path.exists(jp(directory, 'iimage.bin')):
         print('=> iimage not found in', directory)
     else:
-        print('=> Found', directory)
+        print('=> Found', directory + '/{i,d}image.bin')
         return directory
 
 
@@ -43,13 +43,13 @@ def run_simulator(name, executable, testcase):
     with tempfile.TemporaryDirectory() as wd:
         shutil.copy(jp(testcase, 'iimage.bin'), wd)
         shutil.copy(jp(testcase, 'dimage.bin'), wd)
-        completed = subprocess.run(
+        exitcode = subprocess.call(
             [executable],
             cwd=wd,
             # stdout=subprocess.DEVNULL,
             # stderr=subprocess.DEVNULL,
         )
-        bold('=> {} returned {}'.format(name, completed.returncode))
+        bold('=> {} returned {}'.format(name, exitcode))
         shutil.copy(
             os.path.join(wd, 'snapshot.rpt'),
             os.path.join(testcase, 'snapshot.rpt.{}'.format(name))
@@ -68,7 +68,8 @@ def compare(prefix):
         print('=> {:14} Passed'.format(os.path.basename(prefix)))
         return True
     if not equal:
-        subprocess.run(['colordiff', '-u', goldfile, userfile])
+        print('=> {:14} Differ'.format(os.path.basename(prefix)))
+        subprocess.call(['colordiff', '-u', goldfile, userfile])
         return False
 
 
@@ -105,6 +106,10 @@ def main(directories):
             )
         )
     )
+    bold('Discovering user test case...')
+    usertest = validate_testcase('../testcase')
+    if usertest is not None:
+        testcases.append(usertest)
     bold('Discovering custom test cases...')
     if directories:
         testcases.extend(

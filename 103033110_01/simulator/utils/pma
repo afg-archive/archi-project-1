@@ -38,7 +38,7 @@ class DImage:
                 raise Full
             self.reserved[value] = offset * 4
             self.raw[offset] = value
-            print('# M[{}] = {}'.format(offset * 4, value))
+            print('                          # M[{}] = 0x{:x} = {}u = {}s'.format(offset * 4, value, value, u2s(value)))
             return offset * 4
 
     def value_at(self, address):
@@ -50,7 +50,7 @@ class DImage:
             write_be32(file, initial_sp)
             write_be32(file, 256)
             write_be32(file, *self.raw)
-        print('# Written dimage.bin')
+        print('# Written dimage.bin, 256 words(excluding SP and size) total.')
 
 
 dimage = DImage()
@@ -142,7 +142,10 @@ instructions = []
 
 def emit(unsigned):
     import imageinspect
-    print(imageinspect.registry.explain(imageinspect.Code(unsigned)))
+    print('{:<24}  # offset={}'.format(
+        imageinspect.registry.explain(imageinspect.Code(unsigned)),
+        len(instructions) * 4
+    ))
     instructions.append(unsigned)
 
 
@@ -153,7 +156,10 @@ def write_iimage(initial_pc=0):
         write_be32(file, initial_pc)
         write_be32(file, len(instructions))
         write_be32(file, *instructions)
-    print('# Written iimage.bin')
+    print(
+        '# Written iimage.bin,',
+        len(instructions),
+        'words(excluding PC and size) total.')
 
 
 def h2H(value):
@@ -246,7 +252,7 @@ class TC(TSC):
         super().__init__(opcode, signed_c=False)
 
     def __call__(self, t, C):
-        super().__call__(t, C, random.randrange(1 << 5))
+        super().__call__(t, random.randrange(1 << 5), C)
 
 
 class STC(TSC):
