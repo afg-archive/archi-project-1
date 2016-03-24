@@ -125,22 +125,22 @@ public:
                  << std::setbase(16) << std::setw(8) << std::uppercase << pc << "\n\n\n";
     }
 
-    void write_error(const char* str) {
-        errorhere << "In cycle " << std::setbase(10) << cycle_count << ": " << str << "\n";
+    void write_error(const char* str, std::ostream& to) {
+        to << "In cycle " << std::setbase(10) << cycle_count << ": " << str << "\n";
     }
-    void write_warning_if(Warning w, const char* str) {
-        if (es.warnings[w]) write_error(str);
+    void write_warning_if(Warning w, const char* str, std::ostream& to) {
+        if (es.warnings[w]) write_error(str, to);
     }
-    void write_fatal_if(Fatal f, const char* str) {
-        if (es.fatals[f]) write_error(str);
+    void write_fatal_if(Fatal f, const char* str, std::ostream& to) {
+        if (es.fatals[f]) write_error(str, to);
     }
     void write_errors() {
-        write_warning_if(WriteToRegisterS0, "Write $0 Error");
-        write_warning_if(NumberOverflow, "Number Overflow");
-        write_fatal_if(DOverflow, "Address Overflow");
-        write_fatal_if(DMisalign, "Misalignment Error");
-        write_fatal_if(IOverflow, "(ext) I memory address overflow");
-        write_fatal_if(IMisalign, "(ext) I memory address misalign");
+        write_warning_if(WriteToRegisterS0, "Write $0 Error", errorhere);
+        write_warning_if(NumberOverflow, "Number Overflow", errorhere);
+        write_fatal_if(DOverflow, "Address Overflow", errorhere);
+        write_fatal_if(DMisalign, "Misalignment Error", errorhere);
+        write_fatal_if(IOverflow, "(ext) I memory address overflow", loghere);
+        write_fatal_if(IMisalign, "(ext) I memory address misalign", loghere);
     }
 
     void check_r0(size_t offset) {
