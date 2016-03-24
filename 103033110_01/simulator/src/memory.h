@@ -36,7 +36,7 @@ class Memory {
         template <class T>
         bool check() {
             bool clean = true;
-            if (offset + sizeof(T) > mem.Bytes) {
+            if (offset > mem.Bytes - sizeof(T)) {
                 clean = false;
                 set_error(OverflowError);
             }

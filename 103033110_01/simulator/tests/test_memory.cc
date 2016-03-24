@@ -145,6 +145,22 @@ TEST(Memory2, MisalignAndOverflow) {
 }
 
 
+TEST(Memory2, NegativeMisalignAndOverflow) {
+    ErrorState es;
+    DMemory m(1024, es);
+
+    m[-1].getu32();
+
+    EXPECT_FALSE(es.warnings.any());
+    ASSERT_TRUE(es.fatals[DOverflow]);
+    ASSERT_TRUE(es.fatals[DMisalign]);
+
+    es.fatals[DOverflow] = false;
+    es.fatals[DMisalign] = false;
+    ASSERT_FALSE(es.fatals.any());
+}
+
+
 TEST(Memory2, Clear) {
     DMemory m(1024);
 
