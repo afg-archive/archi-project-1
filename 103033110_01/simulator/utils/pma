@@ -165,7 +165,7 @@ def emit(unsigned):
 
 def write_iimage():
     assert initial_pc % 4 == 0
-    assert len(instructions) * 4 + initial_pc < 1024
+    assert len(instructions) * 4 + initial_pc <= 1024
     with open('iimage.bin', mode='wb') as file:
         write_be32(file, initial_pc)
         write_be32(file, len(instructions))
