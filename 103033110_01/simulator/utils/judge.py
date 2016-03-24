@@ -6,6 +6,7 @@ import glob
 import filecmp
 import tempfile
 import shutil
+import difflib
 import subprocess
 
 
@@ -16,6 +17,19 @@ def bold(*args, **kwargs):
     print(end='\033[1m')
     try:
         print(*args, **kwargs)
+    finally:
+        print(end='\033[0;0m')
+
+
+def diffprint(line):
+    if line.startswith('+'):
+        print(end='\033[0;32m')
+    elif line.startswith('-'):
+        print(end='\033[0;31m')
+    elif line.startswith('@@'):
+        print(end='\033[0;36m')
+    try:
+        print(end=line)
     finally:
         print(end='\033[0;0m')
 
@@ -34,7 +48,7 @@ def validate_testcase(directory):
     elif not os.path.exists(jp(directory, 'iimage.bin')):
         print('=> iimage not found in', directory)
     else:
-        print('=> Found', directory + '/{i,d}image.bin')
+        print('=> Found', jp(directory, '{i,d}image.bin'))
         return directory
 
 
@@ -43,12 +57,14 @@ def run_simulator(name, executable, testcase):
     with tempfile.TemporaryDirectory() as wd:
         shutil.copy(jp(testcase, 'iimage.bin'), wd)
         shutil.copy(jp(testcase, 'dimage.bin'), wd)
+        sys.stdout.flush()
         exitcode = subprocess.call(
             [executable],
             cwd=wd,
             # stdout=subprocess.DEVNULL,
             # stderr=subprocess.DEVNULL,
         )
+        sys.stdout.flush()
         bold('=> {} returned {}'.format(name, exitcode))
         shutil.copy(
             os.path.join(wd, 'snapshot.rpt'),
@@ -69,7 +85,12 @@ def compare(prefix):
         return True
     if not equal:
         print('=> {:14} Differ'.format(os.path.basename(prefix)))
-        subprocess.call(['colordiff', '-u', goldfile, userfile])
+        with open(goldfile) as gf, open(userfile) as uf:
+            for line in difflib.unified_diff(
+                list(gf), list(uf), fromfile=goldfile, tofile=userfile
+            ):
+                diffprint(line)
+        # subprocess.call(['colordiff', '-u', goldfile, userfile])
         return False
 
 
@@ -121,11 +142,22 @@ def main(directories):
     else:
         print('=> No custom test cases specified')
     passed = 0
+    failed_list = []
     for testcase in testcases:
-        passed += judge(goldabs, userabs, testcase)
+        if judge(goldabs, userabs, testcase):
+            passed += 1
+        else:
+            failed_list.append(testcase)
     print('=' * 79)
     bold('Summary:', passed, 'of', len(testcases), 'passed.')
+    if failed_list:
+        print('Failed testcases:')
+        for testcase in failed_list:
+            print(testcase)
+        return 1
+    else:
+        return 0
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    sys.exit(main(sys.argv[1:]))
