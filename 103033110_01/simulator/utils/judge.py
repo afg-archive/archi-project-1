@@ -79,7 +79,7 @@ def run_simulator(name, executable, testcase):
 def compare(prefix):
     goldfile = prefix + '.gold'
     userfile = prefix + '.user'
-    equal = filecmp.cmp(goldfile, userfile)
+    equal = filecmp.cmp(goldfile, userfile, shallow=False)
     if equal:
         print('=> {:14} Passed'.format(os.path.basename(prefix)))
         return True
