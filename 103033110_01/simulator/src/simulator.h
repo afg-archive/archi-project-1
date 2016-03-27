@@ -238,11 +238,11 @@ public:
             }
             break;
         case j:
-            pc = Word(pc + 4u).bits<31, 28>() | 4u * i.c_addr();
+            pc = (Word(pc + 4u).bits<31, 28>() << 28) | 4u * i.c_addr();
             return;
         case jal:
             R[31] = pc + 4u;
-            pc = Word(pc + 4u).bits<31, 28>() | 4u * i.c_addr();
+            pc = (Word(pc + 4u).bits<31, 28>() << 28) | 4u * i.c_addr();
             return;
         case halt:
             throw Halt();
