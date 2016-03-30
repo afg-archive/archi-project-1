@@ -60,7 +60,9 @@ public:
 
     void load_pc(std::istream& is) {
         pc = load_bigendian(is);
+        #ifdef SIM_VERBOSE
         loghere << "PC initialized to " << pc << '\n';
+        #endif
     }
     void load_imem(size_t location, size_t size, std::istream& is) {
         if (location % 4ul) {
@@ -68,27 +70,37 @@ public:
         }
         I.clear();
         auto actual = is.read(I.buffer + location, std::min(1024ul, size)).gcount();
+        #ifdef SIM_VERBOSE
         loghere << "loaded " << actual << " bytes I memory\n";
+        #endif
     }
     void load_iimage(std::istream& is) {
         load_pc(is);
         auto nwords = load_bigendian(is);
+        #ifdef SIM_VERBOSE
         loghere << nwords << " words to load into I memory\n";
+        #endif
         load_imem(pc, nwords * 4u, is);
     }
     void load_sp(std::istream& is) {
         R[29].u = load_bigendian(is);
+        #ifdef SIM_VERBOSE
         loghere << "SP ($29) initialized to " << R[29].u << '\n';
+        #endif
     }
     void load_dmem(size_t size, std::istream& is) {
         M.clear();
         auto actual = is.read(M.buffer, std::min(1024ul, size)).gcount();
+        #ifdef SIM_VERBOSE
         loghere << "loaded " << actual << " bytes D memory\n";
+        #endif
     }
     void load_dimage(std::istream& is) {
         load_sp(is);
         auto nwords = load_bigendian(is);
+        #ifdef SIM_VERBOSE
         loghere << nwords << " words to load into D memory\n";
+        #endif
         load_dmem(nwords * 4u, is);
     }
     bool cycle() {
@@ -101,7 +113,9 @@ public:
         }
         write_errors();
         if (es.fatals.any()) {
+            #ifdef SIM_VERBOSE
             loghere << "Fatal error in cycle: " << std::setbase(10) << cycle_count << std::endl;
+            #endif
             return false;
         }
         write_snapshot();
@@ -139,8 +153,10 @@ public:
         write_warning_if(NumberOverflow, "Number Overflow", errorhere);
         write_fatal_if(DOverflow, "Address Overflow", errorhere);
         write_fatal_if(DMisalign, "Misalignment Error", errorhere);
+        #ifdef SIM_VERBOSE
         write_fatal_if(IOverflow, "(ext) I memory address overflow", loghere);
         write_fatal_if(IMisalign, "(ext) I memory address misalign", loghere);
+        #endif
     }
 
     void check_r0(size_t offset) {
