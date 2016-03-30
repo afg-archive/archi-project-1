@@ -40,8 +40,8 @@ gtest_main.o : $(GTEST_SRCS_)
 gtest_main.a : gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
 
-single_cycle: main.cc
-	$(CXX) $(PERFXX) $^ -o $@
+single_cycle: main.cc $(wildcard src/*.h)
+	$(CXX) $(PERFXX) $< -o $@
 
 test.out : gtest_main.a $(sources:.cc=.o) $(test_sources:.cc=.o)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
