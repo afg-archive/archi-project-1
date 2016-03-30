@@ -8,6 +8,8 @@ CPPFLAGS += -isystem $(GTEST_DIR)/include -I$(SRC_DIR) -MD -MP
 
 CXXFLAGS += -march=native -flto -fno-strict-aliasing -O3 -std=c++11 -g -Wall -Wextra -pthread
 
+PERFXX = -static -march=native -flto -fno-strict-aliasing -O3 -std=c++11 -Wall -Wextra
+
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
 GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
@@ -38,8 +40,8 @@ gtest_main.o : $(GTEST_SRCS_)
 gtest_main.a : gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
 
-single_cycle: main.o
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS)  $^ -o $@
+single_cycle: main.cc
+	$(CXX) $(PERFXX) $^ -o $@
 
 test.out : gtest_main.a $(sources:.cc=.o) $(test_sources:.cc=.o)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
