@@ -6,9 +6,9 @@ TEST_DIR = tests
 # the compiler doesn't generate warnings in Google Test headers.
 CPPFLAGS += -isystem $(GTEST_DIR)/include -I$(SRC_DIR) -MD -MP
 
-CXXFLAGS += -march=native -flto -fno-strict-aliasing -O3 -std=c++11 -g -Wall -Wextra -pthread
+CXXFLAGS += -march=native -flto -fno-strict-aliasing -O3 -std=c++11 -g -Wall -Wextra -Wno-unused-variable -pthread
 
-PERFXX = -static -march=native -flto -fno-strict-aliasing -O3 -std=c++11 -Wall -Wextra
+PERFXX = -static -march=native -flto -fno-strict-aliasing -O3 -std=c++11 -Wall -Wextra -Wno-unused-variable
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
